@@ -1,0 +1,122 @@
+{
+  "name": "remark-directive-sugar",
+  "version": "0.0.0",
+  "description": "Remark plugin built on remark-directive, providing predefined directives for image captions, video embedding, styled GitHub links, badge markers, and more.",
+  "author": "Stephanie Lin <norwaywoods047@gmail.com>",
+  "license": "MIT",
+  "keywords": [
+    "remark-plugin",
+    "remark-directive",
+    "directive",
+    "remark",
+    "mast"
+  ],
+  "repository": "github:lin-stephanie/remark-directive-sugar",
+  "homepage": "https://github.com/lin-stephanie/remark-directive-sugar#readme",
+  "bugs": "https://github.com/lin-stephanie/remark-directive-sugar/issues",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "test": "vitest && vitest run --coverage",
+    "build": "rimraf dist && tsc",
+    "typecheck": "tsc --noEmit",
+    "typecheck:coverage": "type-coverage --strict --detail --min=100",
+    "lint": "xo --prettier",
+    "lint:fix": "xo --prettier --fix",
+    "prepare": "simple-git-hooks",
+    "release": "npx bumpp --tag %s --commit 'chore: release %s' --all"
+  },
+  "dependencies": {
+    "@types/mdast": "^4.0.4",
+    "hastscript": "^9.0.0",
+    "mdast-util-directive": "^3.0.0",
+    "mdast-util-to-hast": "^13.2.0",
+    "unist-util-visit": "^5.0.0"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^2.0.2",
+    "lint-staged": "^15.2.7",
+    "prettier": "^3.3.2",
+    "rehype-minify-whitespace": "^6.0.0",
+    "rehype-parse": "^9.0.1",
+    "rehype-stringify": "^10.0.0",
+    "remark-directive": "^3.0.0",
+    "remark-parse": "^11.0.0",
+    "remark-rehype": "^11.1.0",
+    "rimraf": "^6.0.1",
+    "simple-git-hooks": "^2.11.1",
+    "to-vfile": "^8.0.0",
+    "type-coverage": "^2.29.1",
+    "typescript": "^5.6.3",
+    "unified": "^11.0.5",
+    "vitest": "^2.0.2",
+    "xo": "^0.59.3"
+  },
+  "xo": {
+    "space": true,
+    "semicolon": false,
+    "rules": {
+      "complexity": "off",
+      "capitalized-comments": "off",
+      "@typescript-eslint/object-curly-spacing": "off",
+      "@typescript-eslint/member-delimiter-style": "off",
+      "@typescript-eslint/triple-slash-reference": "off",
+      "@typescript-eslint/prefer-nullish-coalescing": "off",
+      "no-multi-assign": "off",
+      "@typescript-eslint/consistent-type-definitions": [
+        "error",
+        "interface"
+      ],
+      "import/order": [
+        "warn",
+        {
+          "groups": [
+            "builtin",
+            "external",
+            [
+              "internal",
+              "parent",
+              "sibling"
+            ],
+            "index",
+            "type",
+            "object",
+            "unknown"
+          ],
+          "pathGroups": [
+            {
+              "pattern": "./types.js",
+              "group": "type",
+              "position": "after"
+            }
+          ],
+          "distinctGroup": false,
+          "newlines-between": "always",
+          "alphabetize": {
+            "order": "asc"
+          }
+        }
+      ]
+    }
+  },
+  "simple-git-hooks": {
+    "pre-commit": "npx lint-staged"
+  },
+  "lint-staged": {
+    "*": "xo --prettier"
+  },
+  "engines": {
+    "node": "^16.0.0 || ^18.0.0 || >=20.0.0"
+  }
+}

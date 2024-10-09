@@ -1,0 +1,81 @@
+<p>
+  The <code>:badge</code> directive allows you to add customizable markers to
+  improve document visuals.
+</p>
+<p>
+  There are built-in markers that automatically apply predefined labels and
+  colors based on the configuration:
+</p>
+<ul>
+  <li>
+    <code>badge-a</code>:
+    <span
+      class="sugar-badge"
+      style="--badge-color-light:#e9d66b; --badge-color-dark:#fbf8cc"
+      >ARTICLE</span
+    >
+  </li>
+  <li>
+    <code>badge-v</code>:
+    <span
+      class="sugar-badge"
+      style="--badge-color-light:#d473d4; --badge-color-dark:#f1c0e8"
+      >VIDEO</span
+    >
+  </li>
+  <li>
+    <code>badge-o</code>:
+    <span
+      class="sugar-badge"
+      style="--badge-color-light:#4a8ce8; --badge-color-dark:#a3c4f3"
+      >OFFICIAL</span
+    >
+  </li>
+  <li>
+    <code>badge-f</code>:
+    <span
+      class="sugar-badge"
+      style="--badge-color-light:#9568de; --badge-color-dark:#cfbaf0"
+      >FEED</span
+    >
+  </li>
+  <li>
+    <code>badge-t</code>:
+    <span
+      class="sugar-badge"
+      style="--badge-color-light:#ff9966; --badge-color-dark:#ffcfd2"
+      >TOOL</span
+    >
+  </li>
+  <li>
+    <code>badge-w</code>:
+    <span
+      class="sugar-badge"
+      style="--badge-color-light:#8ab9f1; --badge-color-dark:#90dbf4"
+      >WEBSITE</span
+    >
+  </li>
+  <li>
+    <code>badge-g</code>:
+    <span
+      class="sugar-badge"
+      style="--badge-color-light:#74c365; --badge-color-dark:#b9fbc0"
+      >GITHUB</span
+    >
+  </li>
+</ul>
+<p>
+  Additionally, you can use <code>:badge[Text]{&lt;color&gt;}</code> for easy
+  visual customization of badges. For example:
+  <code>:badge[ISSUE]{color=#aaf233}</code> will display as
+  <span
+    class="sugar-badge"
+    style="--badge-color-light:#aaf233; --badge-color-dark:#aaf233"
+    >ISSUE</span
+  >. If no color is specified, the default appearance will look like
+  <span
+    class="sugar-badge"
+    style="--badge-color-light:#bebfc5; --badge-color-dark:#bebfc5"
+    >This</span
+  >.
+</p>
