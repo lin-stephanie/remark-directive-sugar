@@ -18,6 +18,7 @@ import {
   githubUsernameRegex,
   linkStyle,
   tabOrgRegex,
+  iconSvgPath,
   validBadges,
   videoPlatforms,
   imageRegex,
@@ -29,13 +30,17 @@ import type { Plugin } from 'unified'
 import type { UserOptions } from './types.js'
 
 /**
- * A remark plugin for supporting regular
- * {@link https://github.com/remarkjs/remark-directive?tab=readme-ov-file#use remark-directive usage},
- * along with the following predefined directives:
- *  - `::video`: enable consistent video embedding.
- *  - `:link`: link to GitHub users/repositories or other external URLs in Markdown/MDX.
- *      (Inspired by: https://github.com/antfu/markdown-it-magic-link)
- *  - `:badge`/`:badge-*`: customizable badge-like markers.
+ * A remark plugin based on {@link https://github.com/remarkjs/remark-directive remark-directive},
+ * offering the following predefined directives:
+ *
+ *  - `:::image-figure`: creates a block with an image, figcaption, and optional styling, much like a figure in academic papers.
+ *  - `:::image-a`: wraps an image inside a link, making it clickable.
+ *  - `:::image-[validTagsForImg]`: wraps an image inside any valid HTML tags.
+ *  - `::video`: allows for consistent video embedding across different platforms (youtobe, bilibili, vimeo).
+ *  - `:link`: creates styled links to GitHub repositories, users/organizations, or any external URLs. (Inspired by: {@link https://github.com/antfu/markdown-it-magic-link markdown-it-magic-link})
+ *  - `:badge`/`:badge-*`: customizable badges to improve document visuals.
+ *
+ * @remark Supports regular {@link https://github.com/remarkjs/remark-directive?tab=readme-ov-file#use remark-directive usage}.
  *
  * @param options
  *   Optional options to configure the output.
@@ -44,7 +49,6 @@ import type { UserOptions } from './types.js'
  */
 
 const remarkDirectiveSugar: Plugin<[UserOptions?], Root> = (options) => {
-  // get config
   const config = getConfig(options)
   const { classPrefix, image, link, video, badge } = config
 
@@ -126,13 +130,10 @@ const remarkDirectiveSugar: Plugin<[UserOptions?], Root> = (options) => {
             data.hName = 'a'
             const defaultAttributes = { target: '_blank' }
             data.hProperties = { ...defaultAttributes, ...attributes }
-          } else if (imageRegex.test(node.name)) {
+          } else {
             /* image-* */
             const match = node.name.match(imageRegex)
             if (match && validTagsForImg.has(match[1])) {
-              /* const data = node.data || (node.data = {})
-              const attributes = node.attributes || {} */
-
               data.hName = match[1]
               data.hProperties = attributes
             } else {
@@ -329,7 +330,10 @@ const remarkDirectiveSugar: Plugin<[UserOptions?], Root> = (options) => {
                     value: resolvedText,
                   },
                 ]
-              } else if (resolvedStyle === 'github') {
+              } else if (
+                resolvedStyle === 'github' ||
+                resolvedStyle === 'npm'
+              ) {
                 data.hName = 'span'
                 data.hProperties = {
                   style: 'white-space: nowrap',
@@ -337,17 +341,31 @@ const remarkDirectiveSugar: Plugin<[UserOptions?], Root> = (options) => {
                 data.hChildren = [
                   {
                     type: 'element',
-                    tagName: 'span',
+                    tagName: 'svg',
                     properties: {
-                      class: 'i-carbon-logo-github',
+                      xmlns: 'http://www.w3.org/2000/svg',
+                      width: '1.2em',
+                      height: '1.2em',
+                      viewBox: '0 0 32 32',
+                      ariaHidden: 'true',
                     },
-                    children: [],
+                    children: [
+                      {
+                        type: 'element',
+                        tagName: 'path',
+                        properties: {
+                          fill: 'currentColor',
+                          d: iconSvgPath[resolvedStyle],
+                        },
+                        children: [],
+                      },
+                    ],
                   },
                   {
                     type: 'element',
                     tagName: 'a',
                     properties: {
-                      class: `${classPrefix}-link-github`,
+                      class: `${classPrefix}-link-${resolvedStyle}`,
                       href: resolvedLink,
                     },
                     children: [{ type: 'text', value: resolvedText }],

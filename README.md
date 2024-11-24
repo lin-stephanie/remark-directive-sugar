@@ -4,7 +4,7 @@
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
 [![jsDocs.io][jsdocs-src]][jsdocs-href]
 
-A [remark](https://github.com/remarkjs/remark) plugin built on remark-directive, providing predefined directives for image captions, video embedding, styled GitHub links, badge markers, and more.
+A [remark](https://github.com/remarkjs/remark) plugin built on remark-directive, providing predefined directives for image captions, video embedding, styled GitHub links, badges, and more.
 
 ## Usage
 

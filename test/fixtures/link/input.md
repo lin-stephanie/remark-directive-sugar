@@ -18,6 +18,10 @@
 
 :link{#lin-stephanie/astro-antfustyle-theme style=github}
 
-**Example 10**: `:link[send a little encouragement my way ❤️]{link=https://github.com/sponsors/lin-stephanie imageUrl=https://github.githubassets.com/assets/mona-e50f14d05e4b.png}` fully customizes a link.
+**Example 10**: `:link[remark-directive-sugar]{link=https://www.npmjs.com/package/remark-directive-sugar style=npm}` creates a npm-styled link like:
+
+:link[remark-directive-sugar]{link=https://www.npmjs.com/package/remark-directive-sugar style=npm}
+
+**Example 11**: `:link[send a little encouragement my way ❤️]{link=https://github.com/sponsors/lin-stephanie imageUrl=https://github.githubassets.com/assets/mona-e50f14d05e4b.png}` fully customizes a link.
 
 Thanks for making it this far! Writing is no easy task --- maybe you'd like to :link[send a little encouragement my way ❤️]{link=https://github.com/sponsors/lin-stephanie imageUrl=https://github.githubassets.com/assets/mona-e50f14d05e4b.png}.

@@ -1,6 +1,6 @@
 The `:badge` directive allows you to add customizable markers to improve document visuals.
 
-There are built-in markers that automatically apply predefined labels and colors based on the configuration:
+There are built-in badges that automatically apply predefined labels and colors based on the configuration:
 
 - `badge-a`: :badge-a
 - `badge-v`: :badge-v
