@@ -1,12 +1,13 @@
-import rehypeMinifyWhitespace from 'rehype-minify-whitespace'
-import rehypeParse from 'rehype-parse'
-import rehypeStringify from 'rehype-stringify'
-import remarkDirective from 'remark-directive'
-import remarkParse from 'remark-parse'
-import remarkRehype from 'remark-rehype'
-import { readSync } from 'to-vfile'
-import { unified } from 'unified'
 import { test, expect } from 'vitest'
+import { unified } from 'unified'
+import { readSync } from 'to-vfile'
+
+import remarkParse from 'remark-parse'
+import remarkDirective from 'remark-directive'
+import remarkRehype from 'remark-rehype'
+import rehypeParse from 'rehype-parse'
+import rehypeMinifyWhitespace from 'rehype-minify-whitespace'
+import rehypeStringify from 'rehype-stringify'
 
 import remarkDirectiveSugar from '../src/index.js'
 
@@ -35,17 +36,13 @@ function run(name: string, options?: UserOptions) {
       .processSync(readSync(`./test/fixtures/${name}/output.html`))
   )
 
-  // console.log('input', input)
-  // console.log('output', output)
-
   // test
   test(name, () => {
     expect(input).toBe(output)
   })
 }
 
-run('image-figure', { classPrefix: 'sugar' })
-run('image-a', { classPrefix: 'sugar' })
+run('image', { classPrefix: 'sugar' })
 run('video', { classPrefix: 'sugar' })
 run('link', { classPrefix: 'sugar' })
 run('badge', { classPrefix: 'sugar' })

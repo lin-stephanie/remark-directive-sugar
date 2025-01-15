@@ -9,6 +9,7 @@
 import { h } from 'hastscript'
 import { visit } from 'unist-util-visit'
 
+import { IMAGE_REGEX, handleImageDirective } from './directives/image.js'
 import {
   badgeRegex,
   faviconBaseUrl,
@@ -21,11 +22,9 @@ import {
   iconSvgPath,
   validBadges,
   videoPlatforms,
-  imageRegex,
-  validTagsForImg,
 } from './utils.js'
 
-import type { Paragraph, PhrasingContent, Root } from 'mdast'
+import type { Root } from 'mdast'
 import type { Plugin } from 'unified'
 import type { UserOptions } from './types.js'
 
@@ -35,12 +34,12 @@ import type { UserOptions } from './types.js'
  *
  *  - `:::image-figure`: creates a block with an image, figcaption, and optional styling, much like a figure in academic papers.
  *  - `:::image-a`: wraps an image inside a link, making it clickable.
- *  - `:::image-[validTagsForImg]`: wraps an image inside any valid HTML tags.
+ *  - `:::image-*`: wraps an image inside any valid HTML tags.
  *  - `::video`: allows for consistent video embedding across different platforms (youtobe, bilibili, vimeo).
  *  - `:link`: creates styled links to GitHub repositories, users/organizations, or any external URLs. (Inspired by: {@link https://github.com/antfu/markdown-it-magic-link markdown-it-magic-link})
  *  - `:badge`/`:badge-*`: customizable badges to improve document visuals.
  *
- * @remark Supports regular {@link https://github.com/remarkjs/remark-directive?tab=readme-ov-file#use remark-directive usage}.
+ * Also supports {@link https://github.com/remarkjs/remark-directive?tab=readme-ov-file#use regular remark-directive usage}.
  *
  * @param options
  *   Optional options to configure the output.
@@ -63,85 +62,8 @@ const remarkDirectiveSugar: Plugin<[UserOptions?], Root> = (options) => {
         const attributes = node.attributes || {}
         const { children } = node
 
-        if (imageRegex.test(node.name)) {
-          /* :::image-* */
-          if (node.type === 'textDirective')
-            throw new Error(
-              'Unexpected `:image` text directive. Use three colons (`:::`) for an `image` container directive.'
-            )
-          if (node.type === 'leafDirective')
-            throw new Error(
-              'Unexpected `::image` leaf directive. Use three colons (`:::`) for an `image` container directive.'
-            )
-
-          if (node.name === 'image-figure') {
-            /* image-figure */
-            const data = (node.data ||= {})
-            const attributes = node.attributes || {}
-            const { children } = node
-
-            // add figure node
-            data.hName = 'figure'
-            data.hProperties = undefined
-
-            // handle figcaption text
-            // priority: content inside [] of `:::image-figure[]{}`、`![]()`
-            let content: PhrasingContent[]
-            if (
-              children[0].type === 'paragraph' &&
-              children[0].data?.directiveLabel &&
-              children[0].children[0].type === 'text'
-            ) {
-              content = children[0].children
-              children.shift()
-            } else if (
-              children[0].type === 'paragraph' &&
-              children[0].children[0].type === 'image' &&
-              children[0].children[0].alt
-            ) {
-              content = [{ type: 'text', value: children[0].children[0].alt }]
-            } else {
-              throw new Error(
-                `Invalid ${node.name} directive. The figcaption text is missing. Specify it in the '[]' of ':::image-figure[]{}' or '![]()'.`
-              )
-            }
-
-            // add figcaption node
-            const figcaptionNode: Paragraph = {
-              type: 'paragraph',
-              data: {
-                hName: 'figcaption',
-                hProperties: attributes,
-              },
-              children: content,
-            }
-
-            children.push(figcaptionNode)
-          } else if (node.name === 'image-a') {
-            /* image-a */
-            if (!node.attributes?.href)
-              throw new Error(
-                'Unexpectedly missing `href` in the `image-a` directive.'
-              )
-
-            /* const data = node.data || (node.data = {})
-            const attributes = node.attributes || {} */
-
-            data.hName = 'a'
-            const defaultAttributes = { target: '_blank' }
-            data.hProperties = { ...defaultAttributes, ...attributes }
-          } else {
-            /* image-* */
-            const match = node.name.match(imageRegex)
-            if (match && validTagsForImg.has(match[1])) {
-              data.hName = match[1]
-              data.hProperties = attributes
-            } else {
-              throw new Error(
-                'The `image-*` directive failed to match a valid tag.'
-              )
-            }
-          }
+        if (IMAGE_REGEX.test(node.name)) {
+          handleImageDirective(node)
         } else
           switch (node.name) {
             case 'video': {
