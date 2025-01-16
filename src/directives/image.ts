@@ -52,7 +52,6 @@ export function handleImageDirective(
 
   const data = (node.data ||= {})
   const attributes = node.attributes || {}
-  const { children } = node
 
   let hasImage = false
   visit(node, 'image', () => {
@@ -62,12 +61,28 @@ export function handleImageDirective(
   if (!hasImage)
     throw new Error('Invalid `image` directive. The image is missing.')
 
+  node.children = node.children.reduce((acc: any[], child) => {
+    if (child.type === 'paragraph' && child.children[0].type === 'image') {
+      acc.push(...child.children)
+    } else {
+      acc.push(child)
+    }
+    return acc
+  }, [])
+
+  const children = node.children as (
+    | DefinitionContent
+    | BlockContent
+    | PhrasingContent
+  )[]
+
   if (matchTag === 'figure') {
     // add figure node
     data.hName = 'figure'
     data.hProperties = undefined
 
-    // handle figcaption text (priority: content inside [] of `:::image-figure[]{}`、`![]()`)
+    // handle figcaption text
+    // (priority: content inside [] of `:::image-figure[]{}`、`![]()`)
     let content: PhrasingContent[]
     if (
       children[0].type === 'paragraph' &&
@@ -76,12 +91,8 @@ export function handleImageDirective(
     ) {
       content = children[0].children
       children.shift()
-    } else if (
-      children[0].type === 'paragraph' &&
-      children[0].children[0].type === 'image' &&
-      children[0].children[0].alt
-    ) {
-      content = [{ type: 'text', value: children[0].children[0].alt }]
+    } else if (children[0].type === 'image' && children[0].alt) {
+      content = [{ type: 'text', value: children[0].alt }]
     } else {
       throw new Error(
         'Invalid `image` directive. The figcaption text is missing. Specify it in the `[]` of `:::image-figure[]{}` or `![]()`.'
