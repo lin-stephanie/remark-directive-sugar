@@ -46,7 +46,7 @@ describe('Error Cases', () => {
                 `
     expectToThrow(
       md,
-      'Invalid `image` directive. The directive failed to match a valid tag. See https://github.com/lin-stephanie/remark-directive-sugar/blob/main/src/directives/image.rs#L9 for details.'
+      'Invalid `image` directive. The directive failed to match a valid HTML tag. See https://github.com/lin-stephanie/remark-directive-sugar/blob/main/src/directives/image.rs#L9 for details.'
     )
   })
 

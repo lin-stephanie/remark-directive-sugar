@@ -9,7 +9,10 @@
 import { h } from 'hastscript'
 import { visit } from 'unist-util-visit'
 
-import { IMAGE_REGEX, handleImageDirective } from './directives/image.js'
+import {
+  createImageDirectiveRegex,
+  handleImageDirective,
+} from './directives/image.js'
 import {
   badgeRegex,
   faviconBaseUrl,
@@ -62,8 +65,9 @@ const remarkDirectiveSugar: Plugin<[UserOptions?], Root> = (options) => {
         const attributes = node.attributes || {}
         const { children } = node
 
-        if (IMAGE_REGEX.test(node.name)) {
-          handleImageDirective(node)
+        const imageDirectiveRegex = createImageDirectiveRegex(image.alias)
+        if (imageDirectiveRegex.test(node.name)) {
+          handleImageDirective(node, image, imageDirectiveRegex)
         } else
           switch (node.name) {
             case 'video': {

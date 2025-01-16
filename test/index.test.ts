@@ -42,7 +42,7 @@ function run(name: string, options?: UserOptions) {
   })
 }
 
-run('image', { classPrefix: 'sugar' })
+run('image', { image: { alias: ['i', 'img'] } })
 run('video', { classPrefix: 'sugar' })
 run('link', { classPrefix: 'sugar' })
 run('badge', { classPrefix: 'sugar' })

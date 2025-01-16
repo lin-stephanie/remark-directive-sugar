@@ -22,8 +22,8 @@
 ![OG image](https://images.pexels.com/photos/237272/pexels-photo-237272.jpeg)
 :::
 
-::::image-a{href="https://github.com/lin-stephanie/astro-antfustyle-theme"}
-:::image-figure[This example shows `:::image-a` wraps around `:::image-figure` (both are interchangeable).]
+::::i-a{href="https://github.com/lin-stephanie/astro-antfustyle-theme"}
+:::i-figure[This example shows `:::image-a` wraps around `:::image-figure` (both are interchangeable).]
 ![OG image](https://images.pexels.com/photos/237272/pexels-photo-237272.jpeg)
 :::
 ::::
@@ -33,7 +33,7 @@
 :::
 
 :::image-figure[This example shows different images for light (add `class:img-light`) and dark (add `class:img-dark`) modes.]
-![](~/assets/markdown-mdx-extended-featurs/rose-dark.png)(class:img-light)
+![](~/assets/markdown-mdx-extended-featurs/rose-dark.png)
 
-![](~/assets/markdown-mdx-extended-featurs/plum-light.png)(class:img-dark)
+![](~/assets/markdown-mdx-extended-featurs/plum-light.png)
 :::
