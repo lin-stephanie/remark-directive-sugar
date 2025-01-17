@@ -1,4 +1,9 @@
-// import type { ProProperties } from "hast";
+import { Properties } from 'hast'
+import {
+  ContainerDirective,
+  LeafDirective,
+  TextDirective,
+} from 'mdast-util-directive'
 
 export interface BadgePreset {
   /**
@@ -36,6 +41,58 @@ export interface BadgePreset {
   color?: string
 }
 
+/**
+ * Create props for an HTML element based on a container directive node.
+ */
+export type PropsFromContainerDirective = (
+  node: ContainerDirective
+) => Properties | null | undefined
+
+/**
+ * Create props for an HTML element based on a leaf directive node.
+ */
+export type PropsFromLeftDirective = (
+  node: LeafDirective
+) => Properties | null | undefined
+
+/**
+ * Create props for an HTML element based on a text directive node.
+ */
+export type PropsFromTextDirective = (
+  node: TextDirective
+) => Properties | null | undefined
+
+export type ImageDirectiveOptions = {
+  /**
+   * The alias for the `image` directive,
+   * e.g., setting `'img'` matches both `:::image-*` and `:::img-*`,
+   * where `*` remains the same and must be a valid HTML tag.
+   */
+  alias?: string | string[] | null | undefined
+
+  /**
+   * Properties to add to the `img` element.
+   */
+  imgProps?: PropsFromContainerDirective | Properties | null | undefined
+
+  /**
+   * Properties to add to the `figure` element.
+   */
+  figureProps?: PropsFromContainerDirective | Properties | null | undefined
+
+  /**
+   * Properties to add to the `figcaption` element.
+   * Note that `{}` in `:::image-figure[]{}` will override this.
+   */
+  figcaptionProps?: PropsFromContainerDirective | Properties | null | undefined
+
+  /**
+   * Properties to add to other valid HTML elements.
+   * Note that `{}` in `:::image-*[]{}` will override this.
+   */
+  elementProps?: PropsFromContainerDirective | Properties | null | undefined
+}
+
 export interface RemarkDirectiveSugarOptions<T> {
   /**
    * Prefix for the class names.
@@ -43,10 +100,10 @@ export interface RemarkDirectiveSugarOptions<T> {
    * @default 'directive-sugar'
    */
   classPrefix?: string
-  image?: {
-    // alias: string
-    // aProps: ProProperties
-  }
+  /**
+   * Configures the `image` directive.
+   */
+  image?: ImageDirectiveOptions
   video?: {
     // alias: string
     // iframeProps: ProProperties

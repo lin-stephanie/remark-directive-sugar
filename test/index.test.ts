@@ -1,6 +1,7 @@
 import { test, expect } from 'vitest'
 import { unified } from 'unified'
 import { readSync } from 'to-vfile'
+import { visit } from 'unist-util-visit'
 
 import remarkParse from 'remark-parse'
 import remarkDirective from 'remark-directive'
@@ -43,7 +44,31 @@ function run(name: string, options?: UserOptions) {
 }
 
 run('image', { image: { alias: ['i', 'img'] } })
-run('video', { classPrefix: 'sugar' })
-run('link', { classPrefix: 'sugar' })
-run('badge', { classPrefix: 'sugar' })
-run('common', { classPrefix: 'sugar' })
+run('image-option', {
+  image: {
+    imgProps: (node) => {
+      let special = false
+      visit(node, 'image', (image) => {
+        if (
+          image.url ===
+          'https://images.pexels.com/photos/237271/pexels-photo-237271.jpeg'
+        )
+          special = true
+        return false
+      })
+      return special ? { class: 'img-special-class' } : { class: 'img-class' }
+    },
+    figureProps: { class: 'figure-class' },
+    figcaptionProps: { class: 'figcaption-class', style: 'color:red' },
+    elementProps: (node) => {
+      let isA = false
+      if (node.name === 'image-a') isA = true
+      return isA ? { class: 'a-class' } : { class: 'element-class' }
+    },
+  },
+})
+
+// run('video', { classPrefix: 'sugar' })
+// run('link', { classPrefix: 'sugar' })
+// run('badge', { classPrefix: 'sugar' })
+// run('common', { classPrefix: 'sugar' })

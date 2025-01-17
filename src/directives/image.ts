@@ -1,5 +1,6 @@
+import { Properties } from 'hast'
 import { visit, EXIT } from 'unist-util-visit'
-import { ImageDirectiveOptions } from '../types.js'
+import { ImageDirectiveOptions, PropsFromContainerDirective } from '../types.js'
 
 import type {
   BlockContent,
@@ -16,7 +17,7 @@ import type {
 const DEFAULT_NAME = ['image']
 const RESERVED_NAMES = ['video', 'badge', 'link']
 
-const VALID_TAGS_FOR_IMG = new Set<string>([
+const VALID_TAGS = new Set<string>([
   'figure',
   'a',
   'div',
@@ -64,6 +65,16 @@ export const createImageDirectiveRegex = (
 }
 
 /**
+ * Call a function to get a return value or use the value.
+ */
+function createIfNeeded(
+  value: PropsFromContainerDirective | Properties | null | undefined,
+  node: ContainerDirective
+) {
+  return typeof value === 'function' ? value(node) : value
+}
+
+/**
  * Handles the `image` directive.
  *
  * @param {ContainerDirective | LeafDirective | TextDirective} node
@@ -95,25 +106,35 @@ export function handleImageDirective(
   // try to match the valid HTML tag
   let matchTag: string
   const match = node.name.match(imageDirectiveRegex)
-  if (match && VALID_TAGS_FOR_IMG.has(match[1])) {
+  if (match && VALID_TAGS.has(match[1])) {
     matchTag = match[1]
   } else {
     throw new Error(
-      'Invalid `image` directive. The directive failed to match a valid HTML tag. See https://github.com/lin-stephanie/remark-directive-sugar/blob/main/src/directives/image.rs#L9 for details.'
+      'Invalid `image` directive. The directive failed to match a valid HTML tag. See https://github.com/lin-stephanie/remark-directive-sugar/blob/main/src/directives/image.ts#L20 for details.'
     )
   }
 
-  const data = (node.data ||= {})
-  const attributes = node.attributes || {}
-
+  // check if the image is missing & set image properties
   let hasImage = false
-  visit(node, 'image', () => {
+  const imgProps = createIfNeeded(config.imgProps, node)
+  visit(node, 'image', (imageNode) => {
+    if (imgProps) {
+      imageNode.data = imageNode.data || {}
+      imageNode.data.hProperties = imageNode.data.hProperties || {}
+      Object.assign(imageNode.data.hProperties, structuredClone(imgProps))
+    }
+
     hasImage = true
     return EXIT
   })
   if (!hasImage)
     throw new Error('Invalid `image` directive. The image is missing.')
 
+  const data = (node.data ||= {})
+  const attributes = node.attributes || {}
+
+  // remove unnecessary `paragraph` nodes
+  // (if the paragraph node only contains a single `image` node)
   node.children = node.children.reduce((acc: any[], child) => {
     if (child.type === 'paragraph' && child.children[0].type === 'image') {
       acc.push(...child.children)
@@ -122,7 +143,6 @@ export function handleImageDirective(
     }
     return acc
   }, [])
-
   const children = node.children as (
     | DefinitionContent
     | BlockContent
@@ -130,9 +150,12 @@ export function handleImageDirective(
   )[]
 
   if (matchTag === 'figure') {
+    const figureProps = createIfNeeded(config.figureProps, node)
+    const figcaptionProps = createIfNeeded(config.figcaptionProps, node)
+
     // add figure node
     data.hName = 'figure'
-    data.hProperties = undefined
+    data.hProperties = figureProps ? structuredClone(figureProps) : undefined
 
     // handle figcaption text
     // (priority: content inside [] of `:::image-figure[]{}`、`![]()`)
@@ -157,14 +180,20 @@ export function handleImageDirective(
       type: 'paragraph',
       data: {
         hName: 'figcaption',
-        hProperties: attributes,
+        hProperties: figcaptionProps
+          ? Object.assign(structuredClone(figcaptionProps), attributes)
+          : attributes,
       },
       children: content,
     }
 
     children.push(figcaptionNode)
   } else {
+    const elementProps = createIfNeeded(config.elementProps, node)
+
     data.hName = matchTag
-    data.hProperties = attributes
+    data.hProperties = elementProps
+      ? Object.assign(structuredClone(elementProps), attributes)
+      : attributes
   }
 }

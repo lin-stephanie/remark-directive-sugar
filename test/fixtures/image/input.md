@@ -14,15 +14,15 @@
 ![If `[caption]` not set, the alt text from `![]()` will be used as the figcaption.](https://images.pexels.com/photos/237272/pexels-photo-237272.jpeg)
 :::
 
-:::image-a{href="https://github.com/lin-stephanie/astro-antfustyle-theme"}
+:::image-a{href="https://github.com/lin-stephanie/remark-directive-sugar"}
 ![OG image](https://images.pexels.com/photos/237272/pexels-photo-237272.jpeg)
 :::
 
-:::image-a{href="https://github.com/lin-stephanie/astro-antfustyle-theme" style="display:block" .custom-class}
+:::image-a{href="https://github.com/lin-stephanie/remark-directive-sugar" style="display:block" .custom-class}
 ![OG image](https://images.pexels.com/photos/237272/pexels-photo-237272.jpeg)
 :::
 
-::::i-a{href="https://github.com/lin-stephanie/astro-antfustyle-theme"}
+::::i-a{href="https://github.com/lin-stephanie/remark-directive-sugar"}
 :::i-figure[This example shows `:::image-a` wraps around `:::image-figure` (both are interchangeable).]
 ![OG image](https://images.pexels.com/photos/237272/pexels-photo-237272.jpeg)
 :::
@@ -33,7 +33,7 @@
 :::
 
 :::image-figure[This example shows different images for light (add `class:img-light`) and dark (add `class:img-dark`) modes.]
-![](~/assets/markdown-mdx-extended-featurs/rose-dark.png)
+![](https://images.pexels.com/photos/237272/pexels-photo-237272.jpeg)
 
-![](~/assets/markdown-mdx-extended-featurs/plum-light.png)
+![](https://images.pexels.com/photos/237272/pexels-photo-237272.jpeg)
 :::

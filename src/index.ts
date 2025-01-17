@@ -37,7 +37,7 @@ import type { UserOptions } from './types.js'
  *
  *  - `:::image-figure`: creates a block with an image, figcaption, and optional styling, much like a figure in academic papers.
  *  - `:::image-a`: wraps an image inside a link, making it clickable.
- *  - `:::image-*`: wraps an image inside any valid HTML tags.
+ *  - `:::image-*`: wraps an image inside any {@link https://github.com/lin-stephanie/remark-directive-sugar/blob/main/src/directives/image.ts#L21 valid HTML tags}.
  *  - `::video`: allows for consistent video embedding across different platforms (youtobe, bilibili, vimeo).
  *  - `:link`: creates styled links to GitHub repositories, users/organizations, or any external URLs. (Inspired by: {@link https://github.com/antfu/markdown-it-magic-link markdown-it-magic-link})
  *  - `:badge`/`:badge-*`: customizable badges to improve document visuals.

@@ -1,5 +1,5 @@
-import { describe, test, expect } from 'vitest'
 import { unified } from 'unified'
+import { describe, test, expect } from 'vitest'
 
 import remarkParse from 'remark-parse'
 import remarkDirective from 'remark-directive'
@@ -7,23 +7,43 @@ import remarkRehype from 'remark-rehype'
 import rehypeMinifyWhitespace from 'rehype-minify-whitespace'
 import rehypeStringify from 'rehype-stringify'
 
-import remarkDirectiveSugar from '../src/index'
+import remarkDirectiveSugar from '../src/index.js'
 
-function createProcessor() {
+import type { UserOptions } from '../src/types.js'
+
+function createProcessor(options?: UserOptions) {
   return unified()
     .use(remarkParse)
     .use(remarkDirective)
-    .use(remarkDirectiveSugar)
+    .use(remarkDirectiveSugar, options)
     .use(remarkRehype)
     .use(rehypeMinifyWhitespace)
     .use(rehypeStringify)
 }
 
-function expectToThrow(md: string, errorMessage: string) {
-  expect(() => createProcessor().processSync(md)).toThrowError(errorMessage)
+function expectToThrow(
+  md: string,
+  errorMessage: string,
+  options?: UserOptions
+) {
+  expect(() => createProcessor(options).processSync(md)).toThrowError(
+    errorMessage
+  )
 }
 
 describe('Error Cases', () => {
+  test('should throw if alias is invalid', () => {
+    const md = `:::image-a
+                ![](https://images.pexels.com/photos/237272/pexels-photo-237272.jpeg)
+                :::
+                `
+    expectToThrow(
+      md,
+      "The alias 'video' is reserved and cannot be used for the `image` directive.",
+      { image: { alias: 'video' } }
+    )
+  })
+
   test('should throw on text directive', () => {
     const md = ':image-a[]'
     expectToThrow(
@@ -46,7 +66,7 @@ describe('Error Cases', () => {
                 `
     expectToThrow(
       md,
-      'Invalid `image` directive. The directive failed to match a valid HTML tag. See https://github.com/lin-stephanie/remark-directive-sugar/blob/main/src/directives/image.rs#L9 for details.'
+      'Invalid `image` directive. The directive failed to match a valid HTML tag. See https://github.com/lin-stephanie/remark-directive-sugar/blob/main/src/directives/image.ts#L20 for details.'
     )
   })
 
@@ -60,8 +80,7 @@ describe('Error Cases', () => {
   /* test('should throw if directive is missing figcaption text', () => {
     const md = `:::image-figure
                 ![]()
-                :::
-                `
+                :::`
     expectToThrow(
       md,
       'Invalid `image` directive. The figcaption text is missing. Specify it in the `[]` of `:::image-figure[]{}` or `![]()`.'

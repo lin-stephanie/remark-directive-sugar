@@ -1,22 +1,5 @@
 import type { UserOptions, ConfigOptions, BadgesPreset } from './types.js'
 
-/* image */
-export const imageRegex = /^image-(.*)/
-
-export const validTagsForImg = new Set<string>([
-  'div',
-  'span',
-  'section',
-  'article',
-  'main',
-  'aside',
-  'header',
-  'footer',
-  'nav',
-  'fieldset',
-  'form',
-])
-
 /* video */
 export const videoPlatforms: Record<string, (id: string) => string> = {
   youtubeId: (id) => `https://www.youtube-nocookie.com/embed/${id}`,
@@ -74,18 +57,10 @@ export const validBadges = new Set(Object.keys(badgesPreset))
 /* Default Config */
 export const configOptions: ConfigOptions = {
   classPrefix: 'directive-sugar',
-  image: {
-    // alias: '',
-    // aAttrs: { target: '_blank' },
-  },
-  video: {
-    // alias: '',
-  },
-  link: {
-    // alias: '',
-  },
+  image: {},
+  video: {},
+  link: {},
   badge: {
-    // alias: '',
     preset: badgesPreset,
     defaultColor: '#bebfc5',
   },
