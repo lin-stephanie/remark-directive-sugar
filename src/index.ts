@@ -9,27 +9,40 @@
 import { h } from 'hastscript'
 import { visit } from 'unist-util-visit'
 
-import {
-  createImageDirectiveRegex,
-  handleImageDirective,
-} from './directives/image.js'
-import {
-  badgeRegex,
-  faviconBaseUrl,
-  getConfig,
-  githubRepoRegex,
-  githubTab,
-  githubUsernameRegex,
-  linkStyle,
-  tabOrgRegex,
-  iconSvgPath,
-  validBadges,
-  videoPlatforms,
-} from './utils.js'
+import { handleBadgeDirective } from './directives/badge.js'
+import { handleImageDirective } from './directives/image.js'
+import { createDirectiveRegex } from './utils.js'
 
 import type { Root } from 'mdast'
 import type { Plugin } from 'unified'
-import type { UserOptions } from './types.js'
+import type { RemarkDirectiveSugarOptions, ConfigOptions } from './types.js'
+
+/**
+ * Constructs the configuration.
+ */
+export function getConfig(
+  userOptions: RemarkDirectiveSugarOptions | undefined
+): ConfigOptions {
+  const defaultOptions: ConfigOptions = {
+    image: {},
+    video: {},
+    link: {},
+    badge: {
+      tag: 'span',
+      props: { className: ['rds-badge'] },
+    },
+  }
+
+  if (userOptions)
+    return {
+      image: { ...defaultOptions.image, ...userOptions.image },
+      video: { ...defaultOptions.video, ...userOptions.video },
+      link: { ...defaultOptions.link, ...userOptions.link },
+      badge: { ...defaultOptions.badge, ...userOptions.badge },
+    }
+
+  return defaultOptions
+}
 
 /**
  * A remark plugin based on {@link https://github.com/remarkjs/remark-directive remark-directive},
@@ -50,9 +63,11 @@ import type { UserOptions } from './types.js'
  *   A unified transformer.
  */
 
-const remarkDirectiveSugar: Plugin<[UserOptions?], Root> = (options) => {
+const remarkDirectiveSugar: Plugin<[RemarkDirectiveSugarOptions?], Root> = (
+  options
+) => {
   const config = getConfig(options)
-  const { classPrefix, image, link, video, badge } = config
+  const { image, link, video, badge } = config
 
   return (tree: Root) => {
     visit(tree, function (node) {
@@ -61,382 +76,31 @@ const remarkDirectiveSugar: Plugin<[UserOptions?], Root> = (options) => {
         node.type === 'leafDirective' ||
         node.type === 'textDirective'
       ) {
-        const data = (node.data ||= {})
-        const attributes = node.attributes || {}
-        const { children } = node
+        const imageDirectiveRegex = createDirectiveRegex('image', image.alias)
+        const videoDirectiveRegex = createDirectiveRegex('video', image.alias)
+        const linkDirectiveRegex = createDirectiveRegex('link', image.alias)
+        const badgeDirectiveRegex = createDirectiveRegex('badge', badge.alias)
 
-        const imageDirectiveRegex = createImageDirectiveRegex(image.alias)
         if (imageDirectiveRegex.test(node.name)) {
           handleImageDirective(node, image, imageDirectiveRegex)
-        } else
-          switch (node.name) {
-            case 'video': {
-              /* ::video */
-              if (node.type === 'textDirective')
-                throw new Error(
-                  'Unexpected `:video` text directive. Use double colons (`::`) for an `video` leaf directive.'
-                )
-              if (node.type === 'containerDirective')
-                throw new Error(
-                  'Unexpected `:::video` container directive. Use double colons (`::`) for an `video` leaf directive.'
-                )
+          /* } else if (videoDirectiveRegex.test(node.name)) {
+          handleVideoDirective(node, video, videoDirectiveRegex)
+        } else if (linkDirectiveRegex.test(node.name)) {
+          handleLinkDirective(node, link, linkDirectiveRegex) */
+        } else if (badgeDirectiveRegex.test(node.name)) {
+          handleBadgeDirective(node, badge, badgeDirectiveRegex)
+        } else {
+          const data = (node.data ||= {})
+          const attributes = node.attributes || {}
 
-              // handle attributes
-              let source = ''
-              const { youtubeId, bilibiliId, vimeoId, iframeSrc } = attributes
-
-              if (!youtubeId && !bilibiliId && !vimeoId && !iframeSrc) {
-                throw new Error(
-                  'Invalid `video` directive. Unexpectedly missing one of the following: `youtubeId`, `bilibiliId`, `iframeSrc`.'
-                )
-              } else {
-                for (const [key, id] of Object.entries({
-                  youtubeId,
-                  bilibiliId,
-                  vimeoId,
-                })) {
-                  if (id) {
-                    source = videoPlatforms[key](id)
-                    break
-                  }
-                }
-
-                if (!source && iframeSrc) {
-                  source = iframeSrc
-                }
-              }
-
-              // nested in div（otherwise, the transform style won‘t apply）
-              data.hName = 'div'
-              data.hProperties = {
-                class: `${classPrefix}-video`,
-                style: attributes.noScale && 'margin: 1rem 0',
-              }
-              data.hChildren = [
-                {
-                  type: 'element',
-                  tagName: 'iframe',
-                  properties: {
-                    style: attributes.noScale && 'transform: none',
-                    src: source,
-                    title: attributes.title || 'Video Player',
-                    loading: 'lazy',
-                    allow:
-                      'accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share',
-                    allowFullScreen: true,
-                  },
-                  children: [],
-                },
-              ]
-
-              break
-            }
-
-            case 'link': {
-              /* :link */
-              if (node.type === 'leafDirective')
-                throw new Error(
-                  'Unexpected `::link` leaf directive. Use single colon (`:`) for a `link` text directive.'
-                )
-
-              if (node.type === 'containerDirective')
-                throw new Error(
-                  'Unexpected `:::link` container directive. Use single colon (`:`) for a `link` text directive.'
-                )
-
-              let resolvedText = ''
-              let resolvedLink = ''
-              let resolvedImageUrl = ''
-              let resolvedTab = ''
-              let isOrg = false
-              let resolvedStyle = ''
-
-              const { id, link, imageUrl, tab, style } = attributes
-
-              // check label
-              if (children.length > 0 && children[0].type === 'text') {
-                resolvedText = children[0].value
-              } else if (!id) {
-                throw new Error(
-                  'Invalid `link` directive. The text in the `[]` of `:link[]{}` is required if `id` attribute is not specified.'
-                )
-              }
-
-              // check type
-              if (style && (linkStyle as readonly string[]).includes(style)) {
-                resolvedStyle = style
-              } else if (
-                style &&
-                !(linkStyle as readonly string[]).includes(style)
-              ) {
-                throw new Error(
-                  'Invalid `link` directive. The `style` must be one of "square", "rounded", or "github".'
-                )
-              }
-
-              // check tab
-              if (tab && !githubTab.includes(tab)) {
-                throw new Error(
-                  'Invalid `link` directive. The `tab` must be one of the following: "repositories", "projects", "packages", "stars", "sponsoring", "sponsors", "org-repositories", "org-projects", "org-packages", "org-sponsoring", or "org-people".'
-                )
-              } else if (tab) {
-                const match = tab.match(tabOrgRegex)
-                if (match) {
-                  isOrg = true
-                  resolvedTab = match[1]
-                } else {
-                  resolvedTab = tab
-                }
-              }
-
-              // handle
-              if (!id && link) {
-                // non github scope
-                resolvedLink = link
-                resolvedImageUrl =
-                  imageUrl ||
-                  `${faviconBaseUrl}${new URL(resolvedLink).hostname}`
-                resolvedStyle ||= 'square'
-              } else if (id) {
-                // github scope
-                if (githubUsernameRegex.test(id)) {
-                  resolvedLink =
-                    link ||
-                    (resolvedTab && isOrg
-                      ? `https://github.com/orgs/${id.slice(1)}/${resolvedTab}`
-                      : `https://github.com/${id.slice(1)}?tab=${resolvedTab}`)
-
-                  resolvedImageUrl =
-                    imageUrl || `https://github.com/${id.slice(1)}.png`
-
-                  resolvedStyle ||= 'rounded'
-                  resolvedText ||= id.slice(1)
-                } else if (githubRepoRegex.test(id)) {
-                  const match = id.match(githubRepoRegex)
-                  resolvedLink = link || `https://github.com/${id}`
-
-                  resolvedImageUrl =
-                    imageUrl || `https://github.com/${match?.[1]}.png`
-
-                  resolvedStyle ||= 'square'
-                  resolvedText ||= id
-                } else {
-                  throw new Error(
-                    'Invalid `link` directive. The `id` attribute must be provided in the format `@username` or `username/reponame`.'
-                  )
-                }
-              } else {
-                throw new Error(
-                  'Invalid `link` directive. The `link` attribute is required if `id` attribute is not specified.'
-                )
-              }
-
-              if (resolvedStyle === 'square' || resolvedStyle === 'rounded') {
-                data.hName = 'a'
-                data.hProperties = {
-                  class: `${
-                    resolvedStyle === 'square'
-                      ? `${classPrefix}-link-square`
-                      : `${classPrefix}-link-rounded`
-                  }`,
-                  href: resolvedLink,
-                }
-                data.hChildren = [
-                  {
-                    type: 'element',
-                    tagName: 'span',
-                    properties: {
-                      class: `${classPrefix}-link-image`,
-                      style: `background-image: url(${resolvedImageUrl})`,
-                    },
-                    children: [],
-                  },
-                  {
-                    type: 'text',
-                    value: resolvedText,
-                  },
-                ]
-              } else if (
-                resolvedStyle === 'github' ||
-                resolvedStyle === 'npm'
-              ) {
-                data.hName = 'span'
-                data.hProperties = {
-                  style: 'white-space: nowrap',
-                }
-                data.hChildren = [
-                  {
-                    type: 'element',
-                    tagName: 'svg',
-                    properties: {
-                      xmlns: 'http://www.w3.org/2000/svg',
-                      width: '1.2em',
-                      height: '1.2em',
-                      viewBox: '0 0 32 32',
-                      ariaHidden: 'true',
-                    },
-                    children: [
-                      {
-                        type: 'element',
-                        tagName: 'path',
-                        properties: {
-                          fill: 'currentColor',
-                          d: iconSvgPath[resolvedStyle],
-                        },
-                        children: [],
-                      },
-                    ],
-                  },
-                  {
-                    type: 'element',
-                    tagName: 'a',
-                    properties: {
-                      class: `${classPrefix}-link-${resolvedStyle}`,
-                      href: resolvedLink,
-                    },
-                    children: [{ type: 'text', value: resolvedText }],
-                  },
-                ]
-              }
-
-              break
-            }
-
-            case 'badge': {
-              /* :badge */
-              if (node.type === 'leafDirective')
-                throw new Error(
-                  'Unexpected `::badge` leaf directive. Use single colon (`:`) for a `badge` text directive.'
-                )
-
-              if (node.type === 'containerDirective')
-                throw new Error(
-                  'Unexpected `:::badge` container directive. Use single colon (`:`) for a `badge` text directive.'
-                )
-
-              let resolvedText = ''
-              let resolvedColorLight = ''
-              let resolvedColorDark = ''
-
-              const { color } = attributes
-
-              // check label & get text
-              if (children.length > 0 && children[0].type === 'text') {
-                resolvedText = children[0].value
-              } else {
-                throw new Error(
-                  'Invalid `badge` directive. The text in the `[]` of `:badge[]{}` is required.'
-                )
-              }
-
-              // get color
-              // resolvedColor = color || CONFIG.badge.defaultColor
-              if (color) {
-                const colors = color.split('|').map((color) => color.trim())
-                if (colors.length === 1) {
-                  resolvedColorLight = resolvedColorDark = colors[0]
-                } else if (colors.length === 2) {
-                  ;[resolvedColorLight, resolvedColorDark] = colors
-                } else {
-                  throw new Error(
-                    "Invalid `badge` directive. The `color` expected one or two color values split by '|'."
-                  )
-                }
-              } else {
-                resolvedColorLight = resolvedColorDark = badge.defaultColor
-              }
-
-              data.hName = 'span'
-              data.hProperties = {
-                class: `${classPrefix}-badge`,
-                style: `--badge-color-light:${resolvedColorLight}; --badge-color-dark:${resolvedColorDark}`,
-              }
-              data.hChildren = [
-                {
-                  type: 'text',
-                  value: resolvedText,
-                },
-              ]
-
-              break
-            }
-
-            default: {
-              if (badgeRegex.test(node.name)) {
-                /* :badge-* */
-                if (node.type === 'leafDirective')
-                  throw new Error(
-                    'Unexpected `::badge-*` leaf directive. Use single colon (`:`) for a `badge` text directive.'
-                  )
-
-                if (node.type === 'containerDirective')
-                  throw new Error(
-                    'Unexpected `:::badge-*` container directive. Use single colon (`:`) for a `badge` text directive.'
-                  )
-
-                const match = node.name.match(badgeRegex)
-                if (match && validBadges.has(match[1])) {
-                  let resolvedColorLight = ''
-                  let resolvedColorDark = ''
-
-                  const { color } = attributes
-
-                  // get type
-                  const type = match[1]
-
-                  // get color
-                  const resolvedColor = color || badge.preset[type].color
-
-                  if (resolvedColor) {
-                    const colors = resolvedColor
-                      .split('|')
-                      .map((color) => color.trim())
-                    if (colors.length === 1) {
-                      resolvedColorLight = resolvedColorDark = colors[0]
-                    } else if (colors.length === 2) {
-                      ;[resolvedColorLight, resolvedColorDark] = colors
-                    } else {
-                      throw new Error(
-                        "Invalid `badge` directive. The `color` expected one or two color values split by '|'."
-                      )
-                    }
-                  } else {
-                    resolvedColorLight = resolvedColorDark = badge.defaultColor
-                  }
-
-                  data.hName = 'span'
-                  data.hProperties = {
-                    class: `${classPrefix}-badge`,
-                    // style: `background: ${CONFIG.badge.preset[type].color} `,
-                    style: `--badge-color-light:${resolvedColorLight}; --badge-color-dark:${resolvedColorDark}`,
-                  }
-                  data.hChildren = [
-                    {
-                      type: 'text',
-                      value: badge.preset[type].text,
-                    },
-                  ]
-                } else {
-                  throw new Error(
-                    'The `badge` directive failed to match a valid badge name.'
-                  )
-                }
-              } else {
-                /* common */
-                const hast = h(node.name, attributes)
-                data.hName = hast.tagName
-                data.hProperties = hast.properties
-              }
-            }
-          }
+          const hast = h(node.name, attributes)
+          data.hName = hast.tagName
+          data.hProperties = hast.properties
+        }
       }
     })
   }
 }
 
 export default remarkDirectiveSugar
-export type {
-  UserOptions,
-  RemarkDirectiveSugarOptions,
-  BadgePreset,
-} from './types.js'
+export type { RemarkDirectiveSugarOptions } from './types.js'

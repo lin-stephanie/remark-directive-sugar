@@ -12,9 +12,9 @@ import rehypeStringify from 'rehype-stringify'
 
 import remarkDirectiveSugar from '../src/index.js'
 
-import type { UserOptions } from '../src/types.js'
+import type { RemarkDirectiveSugarOptions } from '../src/types.js'
 
-function run(name: string, options?: UserOptions) {
+function run(name: string, options?: RemarkDirectiveSugarOptions) {
   // handle input
   const markdownProcessor = unified()
     .use(remarkParse)
@@ -46,7 +46,7 @@ function run(name: string, options?: UserOptions) {
 run('image', { image: { alias: ['i', 'img'] } })
 run('image-option', {
   image: {
-    imgProps: (node) => {
+    imgProps(node) {
       let special = false
       visit(node, 'image', (image) => {
         if (
@@ -60,7 +60,7 @@ run('image-option', {
     },
     figureProps: { class: 'figure-class' },
     figcaptionProps: { class: 'figcaption-class', style: 'color:red' },
-    elementProps: (node) => {
+    elementProps(node) {
       let isA = false
       if (node.name === 'image-a') isA = true
       return isA ? { class: 'a-class' } : { class: 'element-class' }

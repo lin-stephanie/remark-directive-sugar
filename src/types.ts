@@ -5,42 +5,6 @@ import {
   TextDirective,
 } from 'mdast-util-directive'
 
-export interface BadgePreset {
-  /**
-   * The default text for this badge type.
-   */
-  text: string
-
-  /**
-   * The icon for this badge type, which must be a string in SVG element format.
-   *
-   * @description
-   * You can check the icon sets on {@link https://icon-sets.iconify.design/ Iconify}.
-   * If unset, this badge type will not display an icon,
-   * even if {@link RemarkDirectiveSugarOptions.showIcon} is true.
-   *
-   * @example
-   * '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 6L9 17l-5-5"/></svg>'
-   *
-   */
-  // icon?: string
-
-  /**
-   * The color(s) for this badge type, which must be a
-   * {@link https://developer.mozilla.org/en-US/docs/Web/CSS/color_value#syntax `<color>`}
-   * type string.
-   *
-   * @description
-   * For new callout types, if unset, the default color
-   * will be `RemarkDirectiveSugarOptions.badge.defaultColor`.
-   *
-   * @example
-   * 'rgb(8, 109, 221)': Suitable for both light and dark themes.
-   * '#E9D66B|#fbf8cc': First color for light theme, second for dark theme.
-   */
-  color?: string
-}
-
 /**
  * Create props for an HTML element based on a container directive node.
  */
@@ -62,62 +26,122 @@ export type PropsFromTextDirective = (
   node: TextDirective
 ) => Properties | null | undefined
 
-export type ImageDirectiveOptions = {
+export interface ImageDirectiveOptions {
   /**
-   * The alias for the `image` directive,
+   * Alias for the `image` directive,
    * e.g., setting `'img'` matches both `:::image-*` and `:::img-*`,
    * where `*` remains the same and must be a valid HTML tag.
    */
   alias?: string | string[] | null | undefined
 
   /**
-   * Properties to add to the `img` element.
+   * Properties for the generated `img` element.
    */
   imgProps?: PropsFromContainerDirective | Properties | null | undefined
 
   /**
-   * Properties to add to the `figure` element.
+   * Properties for the generated `figure` element.
    */
   figureProps?: PropsFromContainerDirective | Properties | null | undefined
 
   /**
-   * Properties to add to the `figcaption` element.
+   * Properties for the generated `figcaption` element.
    * Note that `{}` in `:::image-figure[]{}` will override this.
    */
   figcaptionProps?: PropsFromContainerDirective | Properties | null | undefined
 
   /**
-   * Properties to add to other valid HTML elements.
+   * Properties for the other valid HTML element.
    * Note that `{}` in `:::image-*[]{}` will override this.
    */
   elementProps?: PropsFromContainerDirective | Properties | null | undefined
 }
 
-export interface RemarkDirectiveSugarOptions<T> {
+export interface VideoDirectiveOptions {}
+
+export interface LinkDirectiveOptions {}
+
+export interface BadgeDirectiveOptions {
   /**
-   * Prefix for the class names.
+   * The alias for the `badge` directive,
+   * e.g., setting `'b'` matches both `:badge-*` and `:b-*`,
+   * where `*` matches the key of the {@link presets}.
+   */
+  alias?: string | string[] | null | undefined
+
+  /**
+   * Tag name for the generated element.
    *
-   * @default 'directive-sugar'
+   * @default
+   * 'span'
    */
-  classPrefix?: string
+  tag?: string
+
   /**
-   * Configures the `image` directive.
+   * Properties for the generated element.
+   *
+   * @default
+   * {className: ['rds-badge']} // ('rds' short for 'remark-directive-sugar')
    */
-  image?: ImageDirectiveOptions
-  video?: {
-    // alias: string
-    // iframeProps: ProProperties
-  }
-  link?: {
-    // alias: string
-  }
-  badge?: {
-    // alias: string
-    preset: T
-    defaultColor: string
-  }
+  props?: PropsFromTextDirective | Properties | null | undefined
+
+  /**
+   * Configurations for `:badge-*` directives.
+   *
+   * Each key defines a badge type (`*`) and applies a `data-badge='*'` attribute
+   * to the element for CSS styling. The value specifies the badge's details:
+   *
+   * - `text` (required): Default text for the badge.
+   * - `props` (optional): Custom properties for the generated element. Properties are
+   *   resolved in the following order (the latter overrides the former):
+   *   {@link props}, `props` here, and `{}` in `:badge-*[]{}`,
+   *   except `className`, which is appended.
+   *
+   * @example
+   * {
+   *   v: { text: 'VIDEO', props: { className: ['custom'] } },
+   *   // Output: `<span data-badge="v" class="rds-badge custom">VIDEO</span>`
+   *   w: { text: 'WEB', props: { style: '--bg-light:#ff9966; --bg-dark:#ffcfd2' } },
+   *   // Output: `<span data-badge="w" class="rds-badge" style="--bg-light:#ff9966; --bg-dark:#ffcfd2">WEB</span>`
+   * }
+   */
+  presets?:
+    | Record<
+        string,
+        {
+          text: string
+          props?: PropsFromTextDirective | Properties | null | undefined
+        }
+      >
+    | null
+    | undefined
 }
 
-export type BadgesPreset = Record<string, BadgePreset>
-export type UserOptions = RemarkDirectiveSugarOptions<BadgesPreset>
-export type ConfigOptions = Required<RemarkDirectiveSugarOptions<BadgesPreset>>
+export interface RemarkDirectiveSugarOptions {
+  /**
+   * Configures the `image` directive.
+   *
+   * @see
+   */
+  image?: ImageDirectiveOptions
+  /**
+   * Configures the `video` directive.
+   *
+   * @see
+   */
+  video?: VideoDirectiveOptions
+  /**
+   * Configures the `link` directive.
+   *
+   * @see
+   */
+  link?: LinkDirectiveOptions
+  /**
+   * Configures the `badge` directive.
+   *
+   * @see
+   */
+  badge?: BadgeDirectiveOptions
+}
+
+export type ConfigOptions = Required<RemarkDirectiveSugarOptions>

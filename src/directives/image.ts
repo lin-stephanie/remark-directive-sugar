@@ -1,6 +1,5 @@
-import { Properties } from 'hast'
 import { visit, EXIT } from 'unist-util-visit'
-import { ImageDirectiveOptions, PropsFromContainerDirective } from '../types.js'
+import { createIfNeeded } from '../utils.js'
 
 import type {
   BlockContent,
@@ -8,14 +7,8 @@ import type {
   Paragraph,
   PhrasingContent,
 } from 'mdast'
-import type {
-  ContainerDirective,
-  LeafDirective,
-  TextDirective,
-} from 'mdast-util-directive'
-
-const DEFAULT_NAME = ['image']
-const RESERVED_NAMES = ['video', 'badge', 'link']
+import type { Directives } from 'mdast-util-directive'
+import type { ImageDirectiveOptions } from '../types.js'
 
 const VALID_TAGS = new Set<string>([
   'figure',
@@ -34,65 +27,12 @@ const VALID_TAGS = new Set<string>([
 ])
 
 /**
- * Creates a regex for matching the `image` directive.
- */
-export const createImageDirectiveRegex = (
-  alias: ImageDirectiveOptions['alias']
-) => {
-  const aliases = new Set([
-    ...DEFAULT_NAME,
-    ...(Array.isArray(alias)
-      ? alias
-      : typeof alias === 'string'
-        ? [alias]
-        : []),
-  ])
-
-  for (const reserved of RESERVED_NAMES) {
-    if (aliases.has(reserved)) {
-      throw new Error(
-        `The alias '${reserved}'` +
-          ' is reserved and cannot be used for the `image` directive.'
-      )
-    }
-  }
-
-  const aliasPattern = Array.from(aliases)
-    .map((alias) => alias.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&'))
-    .join('|')
-
-  return new RegExp(`^(?:${aliasPattern})-(\\w+)$`)
-}
-
-/**
- * Call a function to get a return value or use the value.
- */
-function createIfNeeded(
-  value: PropsFromContainerDirective | Properties | null | undefined,
-  node: ContainerDirective
-) {
-  return typeof value === 'function' ? value(node) : value
-}
-
-/**
  * Handles the `image` directive.
- *
- * @param {ContainerDirective | LeafDirective | TextDirective} node
- *   The directive node to be processed.
- * @param {ImageDirectiveOptions} config
- *   The user configuration options for the `image` directive.
- * @param {RegExp} imageDirectiveRegex
- *   The regex for matching the `image` directive.
- *
- * @throws If the directive is not a container directive.
- * @throws If the directive name does not match a valid HTML tag.
- * @throws If the image is missing.
- * @throws If the figcaption text is missing.
  */
 export function handleImageDirective(
-  node: ContainerDirective | LeafDirective | TextDirective,
+  node: Directives,
   config: ImageDirectiveOptions,
-  imageDirectiveRegex: RegExp
+  regex: RegExp
 ) {
   if (node.type === 'textDirective')
     throw new Error(
@@ -103,14 +43,14 @@ export function handleImageDirective(
       'Unexpected leaf directive. Use three colons (`:::`) for an `image` container directive.'
     )
 
-  // try to match the valid HTML tag
+  // check if it matches the valid HTML tag
   let matchTag: string
-  const match = node.name.match(imageDirectiveRegex)
+  const match = node.name.match(regex)
   if (match && VALID_TAGS.has(match[1])) {
     matchTag = match[1]
   } else {
     throw new Error(
-      'Invalid `image` directive. The directive failed to match a valid HTML tag. See https://github.com/lin-stephanie/remark-directive-sugar/blob/main/src/directives/image.ts#L20 for details.'
+      'Invalid `image` directive. The directive failed to match a valid HTML tag. See https://github.com/lin-stephanie/remark-directive-sugar/blob/main/src/directives/image.ts#L22 for details.'
     )
   }
 

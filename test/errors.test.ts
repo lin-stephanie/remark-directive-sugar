@@ -9,9 +9,9 @@ import rehypeStringify from 'rehype-stringify'
 
 import remarkDirectiveSugar from '../src/index.js'
 
-import type { UserOptions } from '../src/types.js'
+import type { RemarkDirectiveSugarOptions } from '../src/types.js'
 
-function createProcessor(options?: UserOptions) {
+function createProcessor(options?: RemarkDirectiveSugarOptions) {
   return unified()
     .use(remarkParse)
     .use(remarkDirective)
@@ -24,7 +24,7 @@ function createProcessor(options?: UserOptions) {
 function expectToThrow(
   md: string,
   errorMessage: string,
-  options?: UserOptions
+  options?: RemarkDirectiveSugarOptions
 ) {
   expect(() => createProcessor(options).processSync(md)).toThrowError(
     errorMessage
@@ -39,7 +39,7 @@ describe('Error Cases', () => {
                 `
     expectToThrow(
       md,
-      "The alias 'video' is reserved and cannot be used for the `image` directive.",
+      "The alias 'video' is reserved and cannot be used for the 'image' directive.",
       { image: { alias: 'video' } }
     )
   })
@@ -66,7 +66,7 @@ describe('Error Cases', () => {
                 `
     expectToThrow(
       md,
-      'Invalid `image` directive. The directive failed to match a valid HTML tag. See https://github.com/lin-stephanie/remark-directive-sugar/blob/main/src/directives/image.ts#L20 for details.'
+      'Invalid `image` directive. The directive failed to match a valid HTML tag. See https://github.com/lin-stephanie/remark-directive-sugar/blob/main/src/directives/image.ts#L22 for details.'
     )
   })
 
