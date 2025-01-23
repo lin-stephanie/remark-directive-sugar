@@ -21,7 +21,7 @@ export function handleBadgeDirective(
       'Unexpected container directive. Use single colon (`:`) for a `badge` text directive.'
     )
 
-  const { tag, props, presets } = config
+  const { spanProps, presets } = config
 
   const data = (node.data ||= {})
   const attributes = node.attributes || {}
@@ -48,7 +48,7 @@ export function handleBadgeDirective(
   // check if the text is missing & get text
   const resolvedText = matchType
     ? presets?.[matchType].text
-    : children[0].type === 'text'
+    : children.length > 0 && children[0].type === 'text'
       ? children[0].value
       : undefined
   if (!resolvedText)
@@ -64,12 +64,13 @@ export function handleBadgeDirective(
       }
     : null
   const properties = mergeProps(
-    createIfNeeded(props, node),
+    createIfNeeded(spanProps, node),
     presetProps,
     attributes
   )
 
-  data.hName = tag
+  // update node
+  data.hName = 'span'
   data.hProperties = properties
   data.hChildren = [
     {

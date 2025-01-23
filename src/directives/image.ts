@@ -10,7 +10,7 @@ import type {
 import type { Directives } from 'mdast-util-directive'
 import type { ImageDirectiveOptions } from '../types.js'
 
-const VALID_TAGS = new Set<string>([
+const validTags = new Set<string>([
   'figure',
   'a',
   'div',
@@ -43,10 +43,10 @@ export function handleImageDirective(
       'Unexpected leaf directive. Use three colons (`:::`) for an `image` container directive.'
     )
 
-  // check if it matches the valid HTML tag
+  // check if it matches the valid HTML tag & get the tag name
   let matchTag: string
   const match = node.name.match(regex)
-  if (match && VALID_TAGS.has(match[1])) {
+  if (match && validTags.has(match[1])) {
     matchTag = match[1]
   } else {
     throw new Error(
@@ -97,7 +97,7 @@ export function handleImageDirective(
     data.hName = 'figure'
     data.hProperties = figureProps ? structuredClone(figureProps) : undefined
 
-    // handle figcaption text
+    // get figcaption text
     // (priority: content inside [] of `:::image-figure[]{}`、`![]()`)
     let content: PhrasingContent[]
     if (
