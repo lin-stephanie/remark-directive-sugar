@@ -21,6 +21,7 @@ export function handleBadgeDirective(
       'Unexpected container directive. Use single colon (`:`) for a `badge` text directive.'
     )
 
+  const defaultSpanProps = { className: ['rds-badge'] }
   const { spanProps, presets } = config
 
   const data = (node.data ||= {})
@@ -28,17 +29,17 @@ export function handleBadgeDirective(
   const { children } = node
 
   // check if it matches the badge type defined in presets
-  let matchType: string | undefined
+  let badgeType: string | undefined
   const match = node.name.match(regex)
   if (match && !match[1]) {
-    matchType = undefined
+    badgeType = undefined
   } else if (
     match &&
     match[1] &&
     presets &&
     new Set(Object.keys(presets)).has(match[1])
   ) {
-    matchType = match[1]
+    badgeType = match[1]
   } else {
     throw new Error(
       'Invalid `badge` directive. The directive failed to match a valid badge type. Please check the `presets` option in the `badge` config.'
@@ -46,8 +47,8 @@ export function handleBadgeDirective(
   }
 
   // check if the text is missing & get text
-  const resolvedText = matchType
-    ? presets?.[matchType].text
+  const resolvedText = badgeType
+    ? presets?.[badgeType].text
     : children.length > 0 && children[0].type === 'text'
       ? children[0].value
       : undefined
@@ -57,21 +58,21 @@ export function handleBadgeDirective(
     )
 
   // handle props
-  const presetProps = matchType
+  const presetProps = badgeType
     ? {
-        'data-badge': matchType,
-        ...createIfNeeded(presets?.[matchType].props, node),
+        'data-badge': badgeType,
+        ...createIfNeeded(presets?.[badgeType].props, node),
       }
     : null
-  const properties = mergeProps(
-    createIfNeeded(spanProps, node),
+  const spanProperties = mergeProps(
+    createIfNeeded({ ...defaultSpanProps, ...spanProps }, node),
     presetProps,
     attributes
   )
 
   // update node
   data.hName = 'span'
-  data.hProperties = properties
+  data.hProperties = spanProperties
   data.hChildren = [
     {
       type: 'text',

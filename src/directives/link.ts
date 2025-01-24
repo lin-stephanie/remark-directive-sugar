@@ -31,8 +31,7 @@ const npmTab = ['readme', 'code', 'dependencies', 'dependents', 'versions']
  */
 export function handleLinkDirective(
   node: Directives,
-  config: LinkDirectiveOptions,
-  regex: RegExp
+  config: LinkDirectiveOptions
 ) {
   if (node.type === 'leafDirective')
     throw new Error(
@@ -44,7 +43,11 @@ export function handleLinkDirective(
       'Unexpected container directive. Use single colon (`:`) for a `link` text directive.'
     )
 
+  const defaultAProps = { className: ['rds-link'] }
   const { aProps, spanProps, faviconSourceUrl } = config
+  const faviconUrl = faviconSourceUrl
+    ? faviconSourceUrl
+    : 'https://www.google.com/s2/favicons?domain={domain}&sz=128'
 
   const data = (node.data ||= {})
   const attributes = node.attributes || {}
@@ -119,18 +122,17 @@ export function handleLinkDirective(
       url || tab
         ? `https://www.npmjs.com/package/${id}?activeTab=${resolvedTab}`
         : `https://www.npmjs.com/package/${id}`
-    resolvedImg =
-      img || faviconSourceUrl!.replace('{domain}', 'https://www.npmjs.com')
+    resolvedImg = img || faviconUrl.replace('{domain}', 'https://www.npmjs.com')
   }
 
   if (linkType === 'custom-url') {
     resolvedUrl = url || id
-    resolvedImg = img || faviconSourceUrl!.replace('{domain}', resolvedUrl)
+    resolvedImg = img || faviconUrl.replace('{domain}', resolvedUrl)
   }
 
   // handle props
   const aProperties = mergeProps(
-    createIfNeeded(aProps, node),
+    createIfNeeded({ ...defaultAProps, ...aProps }, node),
     { 'data-link': linkType },
     attrs
   )

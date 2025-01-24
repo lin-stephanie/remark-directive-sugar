@@ -1,5 +1,5 @@
 import { visit, EXIT } from 'unist-util-visit'
-import { createIfNeeded } from '../utils.js'
+import { createIfNeeded, mergeProps } from '../utils.js'
 
 import type {
   BlockContent,
@@ -43,7 +43,12 @@ export function handleImageDirective(
       'Unexpected leaf directive. Use three colons (`:::`) for an `image` container directive.'
     )
 
-  // check if it matches the valid HTML tag & get the tag name
+  const { imgProps, figureProps, figcaptionProps, elementProps } = config
+
+  const data = (node.data ||= {})
+  const attributes = node.attributes || {}
+
+  // check if it matches the valid HTML tag & get tag name
   let matchTag: string
   const match = node.name.match(regex)
   if (match && validTags.has(match[1])) {
@@ -54,14 +59,13 @@ export function handleImageDirective(
     )
   }
 
-  // check if the image is missing & set image properties
+  // check if the image is missing & handle image props
   let hasImage = false
-  const imgProps = createIfNeeded(config.imgProps, node)
+  const imgProperties = createIfNeeded(imgProps, node)
   visit(node, 'image', (imageNode) => {
-    if (imgProps) {
+    if (imgProperties) {
       imageNode.data = imageNode.data || {}
-      imageNode.data.hProperties = imageNode.data.hProperties || {}
-      Object.assign(imageNode.data.hProperties, structuredClone(imgProps))
+      imageNode.data.hProperties = imgProperties
     }
 
     hasImage = true
@@ -70,11 +74,7 @@ export function handleImageDirective(
   if (!hasImage)
     throw new Error('Invalid `image` directive. The image is missing.')
 
-  const data = (node.data ||= {})
-  const attributes = node.attributes || {}
-
-  // remove unnecessary `paragraph` nodes
-  // (if the paragraph node only contains a single `image` node)
+  // remove unnecessary `paragraph` node that only contains an `image` node
   node.children = node.children.reduce((acc: any[], child) => {
     if (child.type === 'paragraph' && child.children[0].type === 'image') {
       acc.push(...child.children)
@@ -83,6 +83,7 @@ export function handleImageDirective(
     }
     return acc
   }, [])
+
   const children = node.children as (
     | DefinitionContent
     | BlockContent
@@ -90,15 +91,7 @@ export function handleImageDirective(
   )[]
 
   if (matchTag === 'figure') {
-    const figureProps = createIfNeeded(config.figureProps, node)
-    const figcaptionProps = createIfNeeded(config.figcaptionProps, node)
-
-    // add figure node
-    data.hName = 'figure'
-    data.hProperties = figureProps ? structuredClone(figureProps) : undefined
-
-    // get figcaption text
-    // (priority: content inside [] of `:::image-figure[]{}`、`![]()`)
+    // get figcaption text (priority: `[]` of `:::image-figure[]{}`、`![]()`)
     let content: PhrasingContent[]
     if (
       children[0].type === 'paragraph' &&
@@ -115,25 +108,30 @@ export function handleImageDirective(
       )
     }
 
-    // add figcaption node
+    // handle figure & figcaption props
+    const figureProperties = createIfNeeded(figureProps, node)
+    const figcaptionProperties = createIfNeeded(figcaptionProps, node)
+
+    // get figcaption node
     const figcaptionNode: Paragraph = {
       type: 'paragraph',
       data: {
         hName: 'figcaption',
-        hProperties: figcaptionProps
-          ? Object.assign(structuredClone(figcaptionProps), attributes)
-          : attributes,
+        hProperties: mergeProps(figcaptionProperties, null, attributes),
       },
       children: content,
     }
 
+    // update node
+    data.hName = 'figure'
+    data.hProperties = figureProperties ? figureProperties : undefined
     children.push(figcaptionNode)
   } else {
-    const elementProps = createIfNeeded(config.elementProps, node)
+    // handle element props
+    const elementProperties = createIfNeeded(elementProps, node)
 
+    // update node
     data.hName = matchTag
-    data.hProperties = elementProps
-      ? Object.assign(structuredClone(elementProps), attributes)
-      : attributes
+    data.hProperties = mergeProps(elementProperties, null, attributes)
   }
 }

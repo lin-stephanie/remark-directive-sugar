@@ -1,5 +1,5 @@
-import { Properties } from 'hast'
-import { Directives } from 'mdast-util-directive'
+import type { Properties } from 'hast'
+import type { Directives } from 'mdast-util-directive'
 
 const reservedDirectiveNames = new Set(['image', 'video', 'badge', 'link'])
 

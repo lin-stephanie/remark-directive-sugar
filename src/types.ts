@@ -1,5 +1,5 @@
-import { Properties } from 'hast'
-import {
+import type { Properties } from 'hast'
+import type {
   ContainerDirective,
   LeafDirective,
   TextDirective,
@@ -8,88 +8,127 @@ import {
 /**
  * Create props for an HTML element based on a container directive node.
  */
-export type PropsFromContainerDirective = (
+export type PropertiesFromContainerDirective = (
   node: ContainerDirective
 ) => Properties | null | undefined
 
 /**
  * Create props for an HTML element based on a leaf directive node.
  */
-export type PropsFromLeafDirective = (
+export type PropertiesFromLeafDirective = (
   node: LeafDirective
 ) => Properties | null | undefined
 
 /**
  * Create props for an HTML element based on a text directive node.
  */
-export type PropsFromTextDirective = (
+export type PropertiesFromTextDirective = (
   node: TextDirective
 ) => Properties | null | undefined
 
 export interface ImageDirectiveOptions {
   /**
-   * Alias for the `image` directive,
-   * e.g., setting `'img'` matches both `:::image-*` and `:::img-*`,
-   * where `*` remains the same and must be a valid HTML tag.
+   * Alias for the `image` directive.
+   * E.g., `'i'` matches `:::image-*` and `:::img-*`,
+   * where `*` must be a valid HTML tag.
    */
   alias?: string | string[] | null | undefined
 
   /**
    * Properties for the generated `img` element.
    */
-  imgProps?: PropsFromContainerDirective | Properties | null | undefined
+  imgProps?: PropertiesFromContainerDirective | Properties | null | undefined
 
   /**
    * Properties for the generated `figure` element.
    */
-  figureProps?: PropsFromContainerDirective | Properties | null | undefined
+  figureProps?: PropertiesFromContainerDirective | Properties | null | undefined
 
   /**
    * Properties for the generated `figcaption` element.
    *
-   * Note that `{}` in `:::image-figure[]{}` will override this.
+   * Note that `{}` in `:::image-figure[]{}` will override these properties,
+   * except `className`, which is appended.
    */
-  figcaptionProps?: PropsFromContainerDirective | Properties | null | undefined
+  figcaptionProps?:
+    | PropertiesFromContainerDirective
+    | Properties
+    | null
+    | undefined
 
   /**
    * Properties for the other valid HTML element.
    *
-   * Note that `{}` in `:::image-*[]{}` will override this.
+   * Note that `{}` in `:::image-*[]{}` will override these properties,
+   * except `className`, which is appended.
    */
-  elementProps?: PropsFromContainerDirective | Properties | null | undefined
+  elementProps?:
+    | PropertiesFromContainerDirective
+    | Properties
+    | null
+    | undefined
 }
 
-export interface VideoDirectiveOptions {}
-
-export interface LinkDirectiveOptions {
+export interface VideoDirectiveOptions {
   /**
-   * The alias for the `link` directive,
-   * e.g., setting `'l'` matches both `:link` and `:l`.
+   * Alias for the `video` directive,
+   * E.g., `'v'` matches `::video`, `::video-*`, `::v` and `::v-*`,
+   * where `*` is a video platform (e.g., 'youtube', 'bilibili', 'vimeo',
+   * or {@link platforms} keys).
    */
   alias?: string | string[] | null | undefined
 
   /**
-   * Properties for the generated `a` element which contains the link.
+   * Properties for the generated `iframe` element.
+   * Use `className` to override the default class (`'rds-video'`).
    *
-   * Note that `{}` in `:ink[]{}` will override this.
-   *
-   * @default
-   * {className: ['rds-link']} // ('rds' short for 'remark-directive-sugar')
+   * Note that `{}` in `::video[]{}` will override these properties,
+   * except `className`, which is appended.
    */
-  aProps?: PropsFromTextDirective | Properties | null | undefined
+  iframeProps?: PropertiesFromLeafDirective | Properties | null | undefined
+
+  /**
+   * Configurations for additional video platforms to support.
+   *
+   * Each key defines a platform (`*`) and adds `data-video='*'` to the element.
+   * The value specifies the platform's base URL with a `{id}` placeholder,
+   * replaced by the video `id` when used.
+   *
+   * Keys matching built-in platforms ('youtube', 'bilibili', 'vimeo')
+   * will override default URLs.
+   */
+  platforms?: Record<
+    string,
+    `http://${string}{id}${string}` | `https://${string}{id}${string}`
+  >
+}
+
+export interface LinkDirectiveOptions {
+  /**
+   * Alias for the `link` directive.
+   * E.g., `'l'` matches `:link` and `:l`.
+   */
+  alias?: string | string[] | null | undefined
+
+  /**
+   * Properties for the generated `a` element containing the link.
+   * Use `className` to override the default class (`'rds-link'`).
+   *
+   * Note that `{}` in `:link[]{}` will override these properties,
+   * except `className`, which is appended.
+   */
+  aProps?: PropertiesFromTextDirective | Properties | null | undefined
 
   /**
    * Properties for the generated `span` element
-   * which displays avatar or the website's favicon.
+   * used to display an avatar or a website's favicon.
    */
-  spanProps?: PropsFromTextDirective | Properties | null | undefined
+  spanProps?: PropertiesFromTextDirective | Properties | null | undefined
 
   /**
-   * The template URL is used to fetch favicons from a remote service
-   * when the `link` directive `id` is set as the URL.
-   *
-   * Must contain the `{domain}` placeholder, which will be replaced
-   * with the actual domain name.
+   * Template URL to fetch favicons from a remote service
+   * when the `link` directive `id` is set as a URL.
+   * Must include the `{domain}` placeholder, replaced by the actual domain name.
    *
    * @default
    * 'https://www.google.com/s2/favicons?domain={domain}&sz=128'
@@ -105,25 +144,26 @@ export interface LinkDirectiveOptions {
 
 export interface BadgeDirectiveOptions {
   /**
-   * The alias for the `badge` directive,
-   * e.g., setting `'b'` matches both `:badge-*` and `:b-*`,
-   * where `*` matches the key of the {@link presets} which is a badge type.
+   * Alias for the `badge` directive.
+   * E.g., `'b'` matches `:badge-*` and `:b-*`, where `*` is a key in
+   * {@link presets} for a badge type.
    */
   alias?: string | string[] | null | undefined
 
   /**
-   * Properties for the generated `span` element which contains the badge.
+   * Properties for the generated `span` element containing the badge.
+   * Use `className` to override the default class (`'rds-badge'`).
    *
-   * @default
-   * {className: ['rds-badge']} // ('rds' short for 'remark-directive-sugar')
+   * Note that `{}` in `:badge[]{}` and `props` defined in {@link presets}
+   * will override these properties, except `className`, which is appended.
    */
-  spanProps?: PropsFromTextDirective | Properties | null | undefined
+  spanProps?: PropertiesFromTextDirective | Properties | null | undefined
 
   /**
    * Configurations for `:badge-*` directives.
    *
-   * Each key defines a badge type (`*`) and applies a `data-badge='*'`
-   * to the element for CSS styling. The value specifies the badge's details:
+   * Each key defines a badge type (`*`) and adds `data-badge='*'` to the element.
+   * The value specifies the badge's details:
    *
    * - `text` (required): Default text for the badge.
    * - `props` (optional): Custom properties for the generated element. Properties are
@@ -144,7 +184,7 @@ export interface BadgeDirectiveOptions {
         string,
         {
           text: string
-          props?: PropsFromTextDirective | Properties | null | undefined
+          props?: PropertiesFromTextDirective | Properties | null | undefined
         }
       >
     | null
