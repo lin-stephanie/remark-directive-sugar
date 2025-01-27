@@ -94,8 +94,9 @@ export interface VideoDirectiveOptions {
    * The value specifies the platform's base URL with a `{id}` placeholder,
    * replaced by the video `id` when used.
    *
-   * Keys matching built-in platforms ('youtube', 'bilibili', 'vimeo')
-   * will override default URLs.
+   * Keys matching built-in platforms (`'youtube'`, `'bilibili'`, `'vimeo'`)
+   * will override default URLs. The key `'url'` is reserved and used internally
+   * when `id` is a URL, setting `data-video='url'`.
    */
   platforms?: Record<
     string,
@@ -120,10 +121,10 @@ export interface LinkDirectiveOptions {
   aProps?: PropertiesFromTextDirective | Properties | null | undefined
 
   /**
-   * Properties for the generated `span` element
+   * Properties for the generated `img` element
    * used to display an avatar or a website's favicon.
    */
-  spanProps?: PropertiesFromTextDirective | Properties | null | undefined
+  imgProps?: PropertiesFromTextDirective | Properties | null | undefined
 
   /**
    * Template URL to fetch favicons from a remote service
@@ -131,11 +132,11 @@ export interface LinkDirectiveOptions {
    * Must include the `{domain}` placeholder, replaced by the actual domain name.
    *
    * @default
-   * 'https://www.google.com/s2/favicons?domain={domain}&sz=128'
+   * 'https://api.faviconkit.com/{domain}'
    *
    * @example
    * 'https://favicon.yandex.net/favicon/{domain}'
-   * 'https://api.faviconkit.com/{domain}'
+   * 'https://www.google.com/s2/favicons?domain={domain}&sz=128'
    */
   faviconSourceUrl?:
     | `http://${string}{domain}${string}`

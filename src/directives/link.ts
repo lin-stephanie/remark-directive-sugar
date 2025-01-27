@@ -44,10 +44,10 @@ export function handleLinkDirective(
     )
 
   const defaultAProps = { className: ['rds-link'] }
-  const { aProps, spanProps, faviconSourceUrl } = config
+  const { aProps, imgProps, faviconSourceUrl } = config
   const faviconUrl = faviconSourceUrl
     ? faviconSourceUrl
-    : 'https://www.google.com/s2/favicons?domain={domain}&sz=128'
+    : 'https://api.faviconkit.com/{domain}'
 
   const data = (node.data ||= {})
   const attributes = node.attributes || {}
@@ -74,13 +74,14 @@ export function handleLinkDirective(
   // check if the tab is valid & get tab
   let isGithubOrg = false
   let resolvedTab = ''
-
-  if (tab && (githubTab.includes(tab) || npmTab.includes(tab))) {
-    const match = tab.match(tabOrgRegex)
-    isGithubOrg = match ? true : false
-    resolvedTab = match ? match[1] : tab
-  } else {
-    throw new Error('Invalid `link` directive. The `tab` is invalid.')
+  if (tab) {
+    if (!githubTab.includes(tab) && !npmTab.includes(tab)) {
+      throw new Error('Invalid `link` directive. The `tab` is invalid.')
+    } else {
+      const match = tab.match(tabOrgRegex)
+      isGithubOrg = match ? true : false
+      resolvedTab = match ? match[1] : tab
+    }
   }
 
   // get text
@@ -122,32 +123,37 @@ export function handleLinkDirective(
       url || tab
         ? `https://www.npmjs.com/package/${id}?activeTab=${resolvedTab}`
         : `https://www.npmjs.com/package/${id}`
-    resolvedImg = img || faviconUrl.replace('{domain}', 'https://www.npmjs.com')
+    resolvedImg =
+      img ||
+      faviconUrl.replace('{domain}', new URL('https://www.npmjs.com').hostname)
   }
 
   if (linkType === 'custom-url') {
     resolvedUrl = url || id
-    resolvedImg = img || faviconUrl.replace('{domain}', resolvedUrl)
+    resolvedImg =
+      img || faviconUrl.replace('{domain}', new URL(resolvedUrl).hostname)
   }
 
   // handle props
-  const aProperties = mergeProps(
-    createIfNeeded({ ...defaultAProps, ...aProps }, node),
+  const aProperties = createIfNeeded(aProps, node)
+  const aNewProperties = mergeProps(
+    { ...defaultAProps, ...aProperties },
     { 'data-link': linkType },
     attrs
   )
-  const spanProperties = createIfNeeded(spanProps, node)
+  const imgProperties = createIfNeeded(imgProps, node)
 
   // update node
   data.hName = 'a'
-  data.hProperties = aProperties
+  data.hProperties = { href: resolvedUrl, ...aNewProperties }
   data.hChildren = [
     {
       type: 'element',
-      tagName: 'span',
+      tagName: 'img',
       properties: {
-        style: `background-image: url(${resolvedImg})`,
-        ...spanProperties,
+        src: resolvedImg,
+        alt: '',
+        ...imgProperties,
       },
       children: [],
     },

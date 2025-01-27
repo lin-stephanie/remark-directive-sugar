@@ -58,21 +58,22 @@ export function handleBadgeDirective(
     )
 
   // handle props
+  const spanProperties = createIfNeeded(spanProps, node)
   const presetProps = badgeType
     ? {
         'data-badge': badgeType,
         ...createIfNeeded(presets?.[badgeType].props, node),
       }
     : null
-  const spanProperties = mergeProps(
-    createIfNeeded({ ...defaultSpanProps, ...spanProps }, node),
+  const spanNewProperties = mergeProps(
+    { ...defaultSpanProps, ...spanProperties },
     presetProps,
     attributes
   )
 
   // update node
   data.hName = 'span'
-  data.hProperties = spanProperties
+  data.hProperties = spanNewProperties
   data.hChildren = [
     {
       type: 'text',

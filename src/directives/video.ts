@@ -21,23 +21,31 @@ export function handleVideoDirective(
 ) {
   if (node.type === 'textDirective')
     throw new Error(
-      'Unexpected text directive. Use double colon (`::`) for a `video` leaf directive.'
+      'Unexpected text directive. Use double colons (`::`) for a `video` leaf directive.'
     )
 
   if (node.type === 'containerDirective')
     throw new Error(
-      'Unexpected container directive. Use double colon (`::`) for a `video` leaf directive.'
+      'Unexpected container directive. Use double colons (`::`) for a `video` leaf directive.'
     )
 
   const defaultIframeProps = { className: ['rds-video'] }
   const { iframeProps, platforms } = config
-  const expandedPlatforms = { ...defaultPlatforms, ...platforms }
+  const expandedPlatforms: Record<string, string> = {
+    ...defaultPlatforms,
+    ...platforms,
+  }
 
   const data = (node.data ||= {})
   const attributes = node.attributes || {}
   const { children } = node
 
   const { id, ...attrs } = attributes
+
+  // check if the platforms are invalid
+  if (platforms && 'url' in platforms) {
+    throw new Error('Invalid `video` directive config. The `url` is reserved.')
+  }
 
   // check if the id is missing
   if (!id) {
@@ -56,25 +64,40 @@ export function handleVideoDirective(
       )
     }
   } else if (match && !match[1] && customUrlRegex.test(id)) {
-    videoType = 'custom'
+    videoType = 'url'
   } else {
-    throw new Error('Invalid `video` directive. The `id` is a invalid URL.')
+    throw new Error(
+      'Invalid `video` directive. Ensure a valid URL is passed via `id` instead of `#`.'
+    )
+  }
+
+  // get src
+  let src: string
+  if (videoType === 'url') {
+    src = id
+  } else {
+    src = expandedPlatforms[videoType].replace('{id}', id)
   }
 
   // get title
-  const title =
-    children.length > 0 && children[0].type === 'text'
-      ? children[0].value
-      : 'Video Player'
+  let title: string
+  if (children.length > 0 && children[0].type === 'text') {
+    title = children[0].value
+  } else {
+    title = 'Video Player'
+  }
 
   // handle props
-  const iframeProperties = mergeProps(
-    createIfNeeded({ ...defaultIframeProps, ...iframeProps }, node),
+
+  const iframeProperties = createIfNeeded(iframeProps, node)
+  const iframeNewProperties = mergeProps(
+    { ...defaultIframeProps, ...iframeProperties },
     { 'data-video': videoType },
     attrs
   )
 
   // update node
   data.hName = 'iframe'
-  data.hProperties = { ...iframeProperties, title }
+  data.hProperties = { src, title, ...iframeNewProperties }
+  data.hChildren = []
 }
