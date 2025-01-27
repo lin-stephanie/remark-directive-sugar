@@ -28,11 +28,11 @@
 :::
 ::::
 
-:::image-div
+:::img-div
 ![](https://images.pexels.com/photos/237272/pexels-photo-237272.jpeg)
 :::
 
-:::image-figure[This example shows different images for light (add `class:img-light`) and dark (add `class:img-dark`) modes.]
+:::img-figure[This example shows different images for light (add `class:img-light`) and dark (add `class:img-dark`) modes.]
 ![](https://images.pexels.com/photos/237272/pexels-photo-237272.jpeg)
 
 ![](https://images.pexels.com/photos/237272/pexels-photo-237272.jpeg)

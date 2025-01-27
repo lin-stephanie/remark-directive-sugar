@@ -1,14 +1,13 @@
-import { test, expect } from 'vitest'
-import { unified } from 'unified'
-import { readSync } from 'to-vfile'
-import { visit } from 'unist-util-visit'
-
-import remarkParse from 'remark-parse'
-import remarkDirective from 'remark-directive'
-import remarkRehype from 'remark-rehype'
-import rehypeParse from 'rehype-parse'
 import rehypeMinifyWhitespace from 'rehype-minify-whitespace'
+import rehypeParse from 'rehype-parse'
 import rehypeStringify from 'rehype-stringify'
+import remarkDirective from 'remark-directive'
+import remarkParse from 'remark-parse'
+import remarkRehype from 'remark-rehype'
+import { readSync } from 'to-vfile'
+import { unified } from 'unified'
+import { visit } from 'unist-util-visit'
+import { test, expect } from 'vitest'
 
 import remarkDirectiveSugar from '../src/index.js'
 
@@ -43,8 +42,9 @@ function run(name: string, options?: RemarkDirectiveSugarOptions) {
   })
 }
 
+/* image */
 run('image', { image: { alias: ['i', 'img'] } })
-run('image-option', {
+run('imageOptions', {
   image: {
     imgProps(node) {
       let special = false
@@ -68,7 +68,54 @@ run('image-option', {
   },
 })
 
-// run('video', { classPrefix: 'sugar' })
-// run('link', { classPrefix: 'sugar' })
-// run('badge', { classPrefix: 'sugar' })
-// run('common', { classPrefix: 'sugar' })
+/* video */
+run('video', { video: { alias: 'v' } })
+run('videoOptions', {
+  video: {
+    iframeProps: {
+      className: 'custom-class',
+      loading: 'lazy',
+      allow:
+        'accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share',
+    },
+    platforms: { my: 'https://custom.com/{id}' },
+  },
+})
+
+/* link */
+run('link', { link: { alias: 'l' } })
+run('linkOptions', {
+  link: {
+    aProps: { className: ['custom-class1', 'custom-class2'] },
+    imgProps: { style: 'width:1em; height:1em' },
+    faviconSourceUrl: 'https://favicon.yandex.net/favicon/{domain}',
+  },
+})
+
+/* badge */
+run('badge', { badge: { alias: 'b' } })
+run('badgeOptions', {
+  badge: {
+    spanProps(node) {
+      let noPreset = false
+      const match = node.name.match(new RegExp(`^(?:b|badge)(?:-(\\w+))?$`))
+      if (match && !match[1]) noPreset = true
+
+      return noPreset
+        ? { 'data-badge': 'default' }
+        : { className: 'custom-class' }
+    },
+    presets: {
+      a: { text: 'ARTICLE' },
+      v: { text: 'VIDEO' },
+      o: { text: 'OFFICIAL' },
+      f: { text: 'FEED' },
+      t: { text: 'TOOL' },
+      w: { text: 'WEBSITE' },
+      g: { text: 'GITHUB' },
+    },
+  },
+})
+
+/* common */
+run('common')

@@ -1,7 +1,7 @@
 ::video-youtube[custom title]{#gxBkghlglTg}
 
-::v-bilibili{#BV1MC4y1c7Kv}
+::video-bilibili{#BV1MC4y1c7Kv}
 
-::video-vimeo{id=912831806 class=custom-class}
+::video-vimeo{id=912831806}
 
 ::video{id=https://www.youtube-nocookie.com/embed/gxBkghlglTg}

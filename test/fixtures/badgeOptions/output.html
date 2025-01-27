@@ -1,0 +1,83 @@
+<p>
+  The <code>:badge</code> directive allows you to add customizable markers to
+  improve document visuals.
+</p>
+<p>
+  There are built-in badges that automatically apply predefined labels and
+  colors based on the configuration:
+</p>
+<ul>
+  <li>
+    <code>badge-a</code>:
+    <span
+      data-badge="a"
+      class="custom-class"
+      >ARTICLE</span
+    >
+  </li>
+  <li>
+    <code>badge-v</code>:
+    <span
+      data-badge="v"
+      class="custom-class"
+      >VIDEO</span
+    >
+  </li>
+  <li>
+    <code>badge-o</code>:
+    <span
+      data-badge="o"
+      class="custom-class"
+      >OFFICIAL</span
+    >
+  </li>
+  <li>
+    <code>badge-f</code>:
+    <span
+      data-badge="f"
+      class="custom-class"
+      >FEED</span
+    >
+  </li>
+  <li>
+    <code>badge-t</code>:
+    <span
+      data-badge="t"
+      class="custom-class"
+      >TOOL</span
+    >
+  </li>
+  <li>
+    <code>badge-w</code>:
+    <span
+      data-badge="w"
+      class="custom-class"
+      >WEBSITE</span
+    >
+  </li>
+  <li>
+    <code>badge-g</code>:
+    <span
+      data-badge="g"
+      class="custom-class"
+      >GITHUB</span
+    >
+  </li>
+</ul>
+<p>
+  Additionally, you can use <code>:badge[Text]{&lt;color&gt;}</code> for easy
+  visual customization of badges. For example:
+  <code>:badge[ISSUE]{style="--badge-color-light:#faf233; --badge-color-dark:#1af233"}</code> will display as
+  <span
+    data-badge="default"
+    style="--badge-color-light:#faf233; --badge-color-dark:#1af233"
+    class="rds-badge"
+    >ISSUE</span
+  >. If no color is specified, the default appearance will look like
+  <span
+    data-badge="default"
+    style="--badge-color-light:#bebfc5; --badge-color-dark:#bebfc5"
+    class="rds-badge"
+    >This</span
+  >.
+</p>

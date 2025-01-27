@@ -2,7 +2,7 @@
 
 **Example 2**: `:link[Stephanie Lin]{#@lin-stephanie}` links to the GitHub profile of the project maintainer, :link[Stephanie Lin]{#@lin-stephanie}.
 
-**Example 3**: `:l[Vite]{id=@vitejs}` links to the GitHub profile of the :l[Vite]{id=@vitejs} organization.
+**Example 3**: `:link[Vite]{id=@vitejs}` links to the GitHub profile of the :link[Vite]{id=@vitejs} organization.
 
 **Example 4**: `:link{#@lin-stephanie tab=repositories}` links directly to the repositories tab of the GitHub user, like :link{#@lin-stephanie tab=repositories}. For GitHub users, valid `tab` options: `'repositories','projects', 'packages', 'stars', 'sponsoring', 'sponsors'`.
 
@@ -14,20 +14,14 @@
 
 **Example 8**: `:link[Vite]{id=@vitejs class=rds-link-square}` creates a square button like :link[Vite]{id=@vitejs class=rds-link-square}.
 
-**Example 9**: `:link{#lin-stephanie/astro-antfustyle-theme className="rds-link-github1 rds-link-github2"}` creates a GitHub-styled link like:
+**Example 9**: `:link{#lin-stephanie/astro-antfustyle-theme className=rds-link-github}` creates a GitHub-styled link like:
 
-:link{#lin-stephanie/astro-antfustyle-theme class="rds-link-github1 rds-link-github2"}
+:link{#lin-stephanie/astro-antfustyle-theme class=rds-link-github}
 
 **Example 10**: `:link{#remark-directive-sugar}` creates a npm-styled link like:
 
 :link{#remark-directive-sugar}
 
-:link{#remark-directive-sugar tab=code}
-
 **Example 11**: `:link[send a little encouragement my way ❤️]{id=https://github.com/sponsors/lin-stephanie img=https://github.githubassets.com/assets/mona-e50f14d05e4b.png}` fully customizes a link.
 
 Thanks for making it this far! Writing is no easy task --- maybe you'd like to :link[send a little encouragement my way ❤️]{id=https://github.com/sponsors/lin-stephanie img=https://github.githubassets.com/assets/mona-e50f14d05e4b.png}.
-
-Thanks for making it this far! Writing is no easy task --- maybe you'd like to :link{id=https://github.com/sponsors/lin-stephanie img=https://github.githubassets.com/assets/mona-e50f14d05e4b.png}.
-
-:link{id=https://github.com/}

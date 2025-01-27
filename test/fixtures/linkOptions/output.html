@@ -4,9 +4,13 @@
   <a
     href="https://github.com/withastro/astro"
     data-link="github-repo"
-    class="rds-link"
+    class="custom-class1 custom-class2"
   >
-    <img src="https://github.com/withastro.png" alt=""></img
+    <img
+      src="https://github.com/withastro.png"
+      alt=""
+      style="width:1em; height:1em"
+    ></img
     >Astro</a
   > repo.
 </p>
@@ -18,18 +22,30 @@
   <a
     href="https://github.com/lin-stephanie"
     data-link="github-acct"
-    class="rds-link"
+    class="custom-class1 custom-class2"
   >
-    <img src="https://github.com/lin-stephanie.png" alt=""></img
+    <img
+      src="https://github.com/lin-stephanie.png"
+      alt=""
+      style="width:1em; height:1em"
+    ></img
     >Stephanie Lin</a
   >.
 </p>
 
 <p>
-  <strong>Example 3</strong>: <code>:l[Vite]{id=@vitejs}</code> links to the
+  <strong>Example 3</strong>: <code>:link[Vite]{id=@vitejs}</code> links to the
   GitHub profile of the
-  <a href="https://github.com/vitejs" data-link="github-acct" class="rds-link">
-    <img src="https://github.com/vitejs.png" alt=""></img
+  <a
+    href="https://github.com/vitejs"
+    data-link="github-acct"
+    class="custom-class1 custom-class2"
+  >
+    <img
+      src="https://github.com/vitejs.png"
+      alt=""
+      style="width:1em; height:1em"
+    ></img
     >Vite</a
   >
   organization.
@@ -42,9 +58,13 @@
   <a
     href="https://github.com/lin-stephanie?tab=repositories"
     data-link="github-acct"
-    class="rds-link"
+    class="custom-class1 custom-class2"
   >
-    <img src="https://github.com/lin-stephanie.png" alt=""></img
+    <img
+      src="https://github.com/lin-stephanie.png"
+      alt=""
+      style="width:1em; height:1em"
+    ></img
     >lin-stephanie</a
   >. For GitHub users, valid <code>tab</code> options:
   <code>
@@ -57,11 +77,14 @@
   <a
     href="https://github.com/orgs/vitejs/people"
     data-link="github-acct"
-    class="rds-link"
+    class="custom-class1 custom-class2"
   >
-    <img src="https://github.com/vitejs.png" alt=""></img
-    >vitejs</a
-  > For GitHub organizations, valid <code>tab</code> options:
+    <img
+      src="https://github.com/vitejs.png"
+      alt=""
+      style="width:1em; height:1em"
+    ></img
+    >vitejs</a> For GitHub organizations, valid <code>tab</code> options:
   <code>'org-repositories', 'org-projects', 'org-packages', 'org-sponsoring', and 'org-people'</code>.
 </p>
 
@@ -69,8 +92,16 @@
   <strong>Example 6</strong>:
   <code>:link[Google]{id=https://www.google.com/}</code> creates an external
   link to the
-  <a href="https://www.google.com/" data-link="custom-url" class="rds-link">
-    <img src="https://api.faviconkit.com/www.google.com" alt=""></img
+  <a
+    href="https://www.google.com/"
+    data-link="custom-url"
+    class="custom-class1 custom-class2"
+  >
+    <img
+      src="https://favicon.yandex.net/favicon/www.google.com"
+      alt=""
+      style="width:1em; height:1em"
+    ></img
     >Google</a>.
 </p>
 
@@ -81,9 +112,13 @@
   <a
     href="https://github.com/withastro/astro"
     data-link="github-repo"
-    class="rds-link rds-link-rounded"
+    class="custom-class1 custom-class2 rds-link-rounded"
   >
-    <img src="https://github.com/withastro.png" alt=""></img
+    <img
+      src="https://github.com/withastro.png"
+      alt=""
+      style="width:1em; height:1em"
+    ></img
     >Astro</a>.
 </p>
 
@@ -94,9 +129,13 @@
   <a
     href="https://github.com/vitejs"
     data-link="github-acct"
-    class="rds-link rds-link-square"
+    class="custom-class1 custom-class2 rds-link-square"
   >
-    <img src="https://github.com/vitejs.png" alt=""></img
+    <img
+      src="https://github.com/vitejs.png"
+      alt=""
+      style="width:1em; height:1em"
+    ></img
     >Vite</a
   >.
 </p>
@@ -105,7 +144,7 @@
   <strong>Example 9</strong>:
   <code
     >:link{#lin-stephanie/astro-antfustyle-theme
-    className="rds-link-github1 rds-link-github2"}</code
+    className=rds-link-github}</code
   >
   creates a GitHub-styled link like:
 </p>
@@ -113,8 +152,13 @@
   <a
     href="https://github.com/lin-stephanie/astro-antfustyle-theme"
     data-link="github-repo"
-    class="rds-link rds-link-github1 rds-link-github2"
-    ><img src="https://github.com/lin-stephanie.png" alt=""></img
+    class="custom-class1 custom-class2 rds-link-github"
+  >
+    <img
+      src="https://github.com/lin-stephanie.png"
+      alt=""
+      style="width:1em; height:1em"
+    ></img
     >lin-stephanie/astro-antfustyle-theme</a
   >
 </p>
@@ -127,19 +171,13 @@
   <a
     href="https://www.npmjs.com/package/remark-directive-sugar"
     data-link="npm-pkg"
-    class="rds-link"
+    class="custom-class1 custom-class2"
   >
-    <img src="https://api.faviconkit.com/www.npmjs.com" alt=""></img
-    >remark-directive-sugar
-  </a>
-</p>
-<p>
-  <a
-    href="https://www.npmjs.com/package/remark-directive-sugar?activeTab=code"
-    data-link="npm-pkg"
-    class="rds-link"
-  >
-    <img src="https://api.faviconkit.com/www.npmjs.com" alt=""></img
+    <img
+      src="https://favicon.yandex.net/favicon/www.npmjs.com"
+      alt=""
+      style="width:1em; height:1em"
+    ></img
     >remark-directive-sugar
   </a>
 </p>
@@ -158,30 +196,13 @@
   <a
     href="https://github.com/sponsors/lin-stephanie"
     data-link="custom-url"
-    class="rds-link"
+    class="custom-class1 custom-class2"
   >
-    <img src="https://github.githubassets.com/assets/mona-e50f14d05e4b.png" alt=""></img
+    <img
+      src="https://github.githubassets.com/assets/mona-e50f14d05e4b.png"
+      alt=""
+      style="width:1em; height:1em"
+    ></img
     >send a little encouragement my way ❤️</a
   >.
-</p>
-<p>
-  Thanks for making it this far! Writing is no easy task --- maybe you'd like to
-  <a
-    href="https://github.com/sponsors/lin-stephanie"
-    data-link="custom-url"
-    class="rds-link"
-  >
-    <img src="https://github.githubassets.com/assets/mona-e50f14d05e4b.png" alt=""></img
-    >github.com/sponsors/lin-s...</a
-  >.
-</p>
-<p>
-  <a
-    href="https://github.com/"
-    data-link="custom-url"
-    class="rds-link"
-  >
-    <img src="https://api.faviconkit.com/github.com" alt=""></img
-    >github.com</a
-  >
 </p>
