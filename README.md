@@ -11,19 +11,17 @@ A [remark](https://github.com/remarkjs/remark) plugin provides predefined direct
 
 This plugin is built on top of [remark-directive](https://github.com/remarkjs/remark-directive), supporting [regular usage](https://github.com/remarkjs/remark-directive?tab=readme-ov-file#use) and providing the following predefined directives:
 
-- [`:badge[-*]`](#badge[-*]): Generates customizable badges.  
+- [`:badge[-*]`](#badge-): Generates customizable badges.  
 - [`:link`](#link): Creates links to GitHub, npm, or custom URLs.  
-- [`::video[-*]`](#video): Embeds videos from platforms like YouTube, Bilibili, Vimeo, or custom sources.  
-- [`:::image-*`](#image-*): Wraps an image inside valid HTML tags, such as a `<figure>` element to allow adding a descriptive `<figcaption>`, or a hyperlink to make it clickable, and more.
+- [`::video[-*]`](#video-): Embeds videos from platforms like YouTube, Bilibili, Vimeo, or custom sources.  
+- [`:::image-*`](#image-): Wraps an image inside valid HTML tags, such as a `<figure>` element to allow adding a descriptive `<figcaption>`, or a hyperlink to make it clickable, and more.
 
 ## When should I use this?
 
 If you're using `remark-directive`, this plugin provides ready-to-use directives, saving you from writing custom code. If you're building a blog with frameworks like Astro or Next.js, it helps enhance your Markdown / MDX content without repetitive HTML.
 
 > [!NOTE]  
-> This plugin requires `remark-directive`, so make sure to install it as well.  
->  
-> Check out the [Remark Directive Syntax](https://github.com/micromark/micromark-extension-directive?tab=readme-ov-file#syntax) for a quick and easy overview!
+> This plugin requires `remark-directive`, so make sure to install it as well. Check out the [Remark Directive Syntax](https://github.com/micromark/micromark-extension-directive?tab=readme-ov-file#syntax) for a quick and easy overview!
 
 ## Installation
 
@@ -380,11 +378,11 @@ Used to provid predefined directives.
 
 ###### Parameters
 
-* `options` ([`Options`][options], optional) — configuration
+* `options` ([`Options`](#options), optional) — configuration
 
 ###### Returns
 
-Transform ([`Transformer`][https://github.com/unifiedjs/unified#transformer]).
+Transform ([`Transformer`](https://github.com/unifiedjs/unified#transformer)).
 
 ### `Options`
 
@@ -392,10 +390,10 @@ Configuration (TypeScript type). All options are optional.
 
 ###### Fields
 
-- `badge` ([`BadgeDirectiveConfig`](https://github.com/lin-stephanie/remark-directive-sugar/blob/main/src/types.ts#L29)) — Configures the `:badge[-*]` directive.
-- `link` ([`LinkDirectiveConfig`](https://github.com/lin-stephanie/remark-directive-sugar/blob/main/src/types.ts#L78)) — Configures the `:link` directive.
-- `video` ([`VideoDirectiveConfig`](https://github.com/lin-stephanie/remark-directive-sugar/blob/main/src/types.ts#L117)) — Configures the `::video[-*]` directive.
-- `image` ([`ImageDirectiveConfig`](https://github.com/lin-stephanie/remark-directive-sugar/blob/main/src/types.ts#L152)) — Configures the `:::image-*` directive.
+- `badge` ([`BadgeDirectiveConfig`](https://github.com/lin-stephanie/remark-directive-sugar/blob/main/src/types.ts#L29)) — `:badge[-*]` configuration options.
+- `link` ([`LinkDirectiveConfig`](https://github.com/lin-stephanie/remark-directive-sugar/blob/main/src/types.ts#L78)) — `:link` configuration options.
+- `video` ([`VideoDirectiveConfig`](https://github.com/lin-stephanie/remark-directive-sugar/blob/main/src/types.ts#L117)) — `::video[-*]` configuration options.
+- `image` ([`ImageDirectiveConfig`](https://github.com/lin-stephanie/remark-directive-sugar/blob/main/src/types.ts#L152)) — `:::image-*` configuration options.
 
 ## Types
 
