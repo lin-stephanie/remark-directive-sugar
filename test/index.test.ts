@@ -11,9 +11,9 @@ import { test, expect } from 'vitest'
 
 import remarkDirectiveSugar from '../src/index.js'
 
-import type { RemarkDirectiveSugarOptions } from '../src/types.js'
+import type { Options } from '../src/types.js'
 
-function run(name: string, options?: RemarkDirectiveSugarOptions) {
+function run(name: string, options?: Options) {
   // handle input
   const markdownProcessor = unified()
     .use(remarkParse)
@@ -42,6 +42,55 @@ function run(name: string, options?: RemarkDirectiveSugarOptions) {
   })
 }
 
+/* badge */
+run('badge', { badge: { alias: 'b' } })
+run('badgeOptions', {
+  badge: {
+    spanProps(node) {
+      let noPreset = false
+      const match = /^(?:b|badge)(?:-(\w+))?$/.exec(node.name)
+      if (match && !match[1]) noPreset = true
+
+      return noPreset
+        ? { 'data-badge': 'default' }
+        : { className: 'custom-class' }
+    },
+    presets: {
+      a: { text: 'ARTICLE' },
+      v: { text: 'VIDEO' },
+      o: { text: 'OFFICIAL' },
+      f: { text: 'FEED' },
+      t: { text: 'TOOL' },
+      w: { text: 'WEBSITE' },
+      g: { text: 'GITHUB' },
+    },
+  },
+})
+
+/* link */
+run('link', { link: { alias: 'l' } })
+run('linkOptions', {
+  link: {
+    aProps: { className: ['custom-class1', 'custom-class2'] },
+    imgProps: { style: 'width:1em; height:1em' },
+    faviconSourceUrl: 'https://favicon.yandex.net/favicon/{domain}',
+  },
+})
+
+/* video */
+run('video', { video: { alias: 'v' } })
+run('videoOptions', {
+  video: {
+    iframeProps: {
+      className: 'custom-class',
+      loading: 'lazy',
+      allow:
+        'accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share',
+    },
+    platforms: { my: 'https://custom.com/{id}' },
+  },
+})
+
 /* image */
 run('image', { image: { alias: ['i', 'img'] } })
 run('imageOptions', {
@@ -64,55 +113,6 @@ run('imageOptions', {
       let isA = false
       if (node.name === 'image-a') isA = true
       return isA ? { class: 'a-class' } : { class: 'element-class' }
-    },
-  },
-})
-
-/* video */
-run('video', { video: { alias: 'v' } })
-run('videoOptions', {
-  video: {
-    iframeProps: {
-      className: 'custom-class',
-      loading: 'lazy',
-      allow:
-        'accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share',
-    },
-    platforms: { my: 'https://custom.com/{id}' },
-  },
-})
-
-/* link */
-run('link', { link: { alias: 'l' } })
-run('linkOptions', {
-  link: {
-    aProps: { className: ['custom-class1', 'custom-class2'] },
-    imgProps: { style: 'width:1em; height:1em' },
-    faviconSourceUrl: 'https://favicon.yandex.net/favicon/{domain}',
-  },
-})
-
-/* badge */
-run('badge', { badge: { alias: 'b' } })
-run('badgeOptions', {
-  badge: {
-    spanProps(node) {
-      let noPreset = false
-      const match = /^(?:b|badge)(?:-(\w+))?$/.exec(node.name)
-      if (match && !match[1]) noPreset = true
-
-      return noPreset
-        ? { 'data-badge': 'default' }
-        : { className: 'custom-class' }
-    },
-    presets: {
-      a: { text: 'ARTICLE' },
-      v: { text: 'VIDEO' },
-      o: { text: 'OFFICIAL' },
-      f: { text: 'FEED' },
-      t: { text: 'TOOL' },
-      w: { text: 'WEBSITE' },
-      g: { text: 'GITHUB' },
     },
   },
 })

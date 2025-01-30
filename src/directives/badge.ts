@@ -1,14 +1,14 @@
 import { createIfNeeded, mergeProps } from '../utils.js'
 
 import type { Directives } from 'mdast-util-directive'
-import type { BadgeDirectiveOptions } from '../types.js'
+import type { BadgeDirectiveConfig } from '../types.js'
 
 /**
  * Handles the `badge` directive.
  */
 export function handleBadgeDirective(
   node: Directives,
-  config: BadgeDirectiveOptions,
+  config: BadgeDirectiveConfig,
   regex: RegExp
 ) {
   if (node.type === 'leafDirective')

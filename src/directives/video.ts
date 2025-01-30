@@ -1,7 +1,7 @@
 import { createIfNeeded, mergeProps } from '../utils.js'
 
 import type { Directives } from 'mdast-util-directive'
-import type { VideoDirectiveOptions } from '../types.js'
+import type { VideoDirectiveConfig } from '../types.js'
 
 const customUrlRegex = /^(?:https?:\/\/)?(?:[\w-]+\.)+[a-z]{2,}(?:\/\S*)?$/
 
@@ -16,7 +16,7 @@ const defaultPlatforms = {
  */
 export function handleVideoDirective(
   node: Directives,
-  config: VideoDirectiveOptions,
+  config: VideoDirectiveConfig,
   regex: RegExp
 ) {
   if (node.type === 'textDirective')

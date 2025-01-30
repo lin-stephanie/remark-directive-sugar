@@ -8,9 +8,9 @@ import { describe, test, expect } from 'vitest'
 
 import remarkDirectiveSugar from '../src/index.js'
 
-import type { RemarkDirectiveSugarOptions } from '../src/types.js'
+import type { Options } from '../src/types.js'
 
-function createProcessor(options?: RemarkDirectiveSugarOptions) {
+function createProcessor(options?: Options) {
   return unified()
     .use(remarkParse)
     .use(remarkDirective)
@@ -20,11 +20,7 @@ function createProcessor(options?: RemarkDirectiveSugarOptions) {
     .use(rehypeStringify)
 }
 
-function expectToThrow(
-  md: string,
-  errorMessage: string,
-  options?: RemarkDirectiveSugarOptions
-) {
+function expectToThrow(md: string, errorMessage: string, options?: Options) {
   expect(() => createProcessor(options).processSync(md)).toThrowError(
     errorMessage
   )

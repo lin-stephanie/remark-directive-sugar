@@ -26,85 +26,56 @@ export type PropertiesFromTextDirective = (
   node: TextDirective
 ) => Properties | null | undefined
 
-export interface ImageDirectiveOptions {
+export interface BadgeDirectiveConfig {
   /**
-   * Alias for the `image` directive.
-   * E.g., `'i'` matches `:::image-*` and `:::img-*`,
-   * where `*` must be a valid HTML tag.
+   * Alias for the `badge` directive.
+   * E.g., `'b'` matches `:badge`, `:badge-*`, `:b` and `:b-*`,
+   * where `*` is a key in {@link presets} for a badge type.
    */
   alias?: string | string[] | null | undefined
 
   /**
-   * Properties for the generated `img` element.
-   */
-  imgProps?: PropertiesFromContainerDirective | Properties | null | undefined
-
-  /**
-   * Properties for the generated `figure` element.
-   */
-  figureProps?: PropertiesFromContainerDirective | Properties | null | undefined
-
-  /**
-   * Properties for the generated `figcaption` element.
+   * Properties for the generated `span` element containing the badge.
+   * Use `className` to override the default class (`'rds-badge'`).
    *
-   * Note that `{}` in `:::image-figure[]{}` will override these properties,
-   * except `className`, which is appended.
+   * Note that `{}` in `:badge[]{}` and `props` defined in {@link presets}
+   * will override these properties, except `className`, which is appended.
    */
-  figcaptionProps?:
-    | PropertiesFromContainerDirective
-    | Properties
-    | null
-    | undefined
+  spanProps?: PropertiesFromTextDirective | Properties | null | undefined
 
   /**
-   * Properties for the other valid HTML element.
+   * Configurations for `:badge-*` directives.
    *
-   * Note that `{}` in `:::image-*[]{}` will override these properties,
-   * except `className`, which is appended.
+   * Each key defines a badge type (`*`) and adds `data-badge='*'` to the element.
+   * The value specifies the badge's details:
+   *
+   * - `text` (required): Default text for the badge.
+   * - `props` (optional): Custom properties for the generated element. Properties are
+   *   resolved in the following order (the latter overrides the former):
+   *   {@link spanProps}, `props` here, and `{}` in `:badge-*[]{}`,
+   *   except `className`, which is appended.
+   *
+   * @example
+   * {
+   *   v: { text: 'VIDEO', props: { className: ['custom'] } },
+   *   // Output: `<span data-badge="v" class="rds-badge custom">VIDEO</span>`
+   *   w: { text: 'WEB', props: { style: '--bg-light:#ff9966; --bg-dark:#ffcfd2' } },
+   *   // Output: `<span data-badge="w" class="rds-badge" style="--bg-light:#ff9966; --bg-dark:#ffcfd2">WEB</span>`
+   * }
    */
-  elementProps?:
-    | PropertiesFromContainerDirective
-    | Properties
+  presets?:
+    | Record<
+        string,
+        {
+          text: string
+          props?: PropertiesFromTextDirective | Properties | null | undefined
+        }
+      >
     | null
     | undefined
 }
 
-export interface VideoDirectiveOptions {
-  /**
-   * Alias for the `video` directive,
-   * E.g., `'v'` matches `::video`, `::video-*`, `::v` and `::v-*`,
-   * where `*` is a video platform (e.g., 'youtube', 'bilibili', 'vimeo',
-   * or {@link platforms} keys).
-   */
-  alias?: string | string[] | null | undefined
-
-  /**
-   * Properties for the generated `iframe` element.
-   * Use `className` to override the default class (`'rds-video'`).
-   *
-   * Note that `{}` in `::video[]{}` will override these properties,
-   * except `className`, which is appended.
-   */
-  iframeProps?: PropertiesFromLeafDirective | Properties | null | undefined
-
-  /**
-   * Configurations for additional video platforms to support.
-   *
-   * Each key defines a platform (`*`) and adds `data-video='*'` to the element.
-   * The value specifies the platform's base URL with a `{id}` placeholder,
-   * replaced by the video `id` when used.
-   *
-   * Keys matching built-in platforms (`'youtube'`, `'bilibili'`, `'vimeo'`)
-   * will override default URLs. The key `'url'` is reserved and used internally
-   * when `id` is a URL, setting `data-video='url'`.
-   */
-  platforms?: Record<
-    string,
-    `http://${string}{id}${string}` | `https://${string}{id}${string}`
-  >
-}
-
-export interface LinkDirectiveOptions {
+export interface LinkDirectiveConfig {
   /**
    * Alias for the `link` directive.
    * E.g., `'l'` matches `:link` and `:l`.
@@ -143,80 +114,103 @@ export interface LinkDirectiveOptions {
     | `https://${string}{domain}${string}`
 }
 
-export interface BadgeDirectiveOptions {
+export interface VideoDirectiveConfig {
   /**
-   * Alias for the `badge` directive.
-   * E.g., `'b'` matches `:badge-*` and `:b-*`, where `*` is a key in
-   * {@link presets} for a badge type.
+   * Alias for the `video` directive,
+   * E.g., `'v'` matches `::video`, `::video-*`, `::v` and `::v-*`,
+   * where `*` is a video platform (e.g., 'youtube', 'bilibili', 'vimeo',
+   * or {@link platforms} keys).
    */
   alias?: string | string[] | null | undefined
 
   /**
-   * Properties for the generated `span` element containing the badge.
-   * Use `className` to override the default class (`'rds-badge'`).
+   * Properties for the generated `iframe` element.
+   * Use `className` to override the default class (`'rds-video'`).
    *
-   * Note that `{}` in `:badge[]{}` and `props` defined in {@link presets}
-   * will override these properties, except `className`, which is appended.
+   * Note that `{}` in `::video[]{}` will override these properties,
+   * except `className`, which is appended.
    */
-  spanProps?: PropertiesFromTextDirective | Properties | null | undefined
+  iframeProps?: PropertiesFromLeafDirective | Properties | null | undefined
 
   /**
-   * Configurations for `:badge-*` directives.
+   * Configurations for additional video platforms to support.
    *
-   * Each key defines a badge type (`*`) and adds `data-badge='*'` to the element.
-   * The value specifies the badge's details:
+   * Each key defines a platform (`*`) and adds `data-video='*'` to the element.
+   * The value specifies the platform's base URL with a `{id}` placeholder,
+   * replaced by the video `id` when used.
    *
-   * - `text` (required): Default text for the badge.
-   * - `props` (optional): Custom properties for the generated element. Properties are
-   *   resolved in the following order (the latter overrides the former):
-   *   {@link props}, `props` here, and `{}` in `:badge-*[]{}`,
-   *   except `className`, which is appended.
-   *
-   * @example
-   * {
-   *   v: { text: 'VIDEO', props: { className: ['custom'] } },
-   *   // Output: `<span data-badge="v" class="rds-badge custom">VIDEO</span>`
-   *   w: { text: 'WEB', props: { style: '--bg-light:#ff9966; --bg-dark:#ffcfd2' } },
-   *   // Output: `<span data-badge="w" class="rds-badge" style="--bg-light:#ff9966; --bg-dark:#ffcfd2">WEB</span>`
-   * }
+   * Keys matching built-in platforms (`'youtube'`, `'bilibili'`, `'vimeo'`)
+   * will override default URLs. The key `'url'` is reserved and used internally
+   * when `id` is a URL, setting `data-video='url'`.
    */
-  presets?:
-    | Record<
-        string,
-        {
-          text: string
-          props?: PropertiesFromTextDirective | Properties | null | undefined
-        }
-      >
+  platforms?: Record<
+    string,
+    `http://${string}{id}${string}` | `https://${string}{id}${string}`
+  >
+}
+
+export interface ImageDirectiveConfig {
+  /**
+   * Alias for the `image` directive.
+   * E.g., `'img'` matches `:::image-*` and `:::img-*`,
+   * where `*` must be a valid HTML tag.
+   */
+  alias?: string | string[] | null | undefined
+
+  /**
+   * Properties for the generated `img` element.
+   */
+  imgProps?: PropertiesFromContainerDirective | Properties | null | undefined
+
+  /**
+   * Properties for the generated `figure` element.
+   */
+  figureProps?: PropertiesFromContainerDirective | Properties | null | undefined
+
+  /**
+   * Properties for the generated `figcaption` element.
+   *
+   * Note that `{}` in `:::image-figure[]{}` will override these properties,
+   * except `className`, which is appended.
+   */
+  figcaptionProps?:
+    | PropertiesFromContainerDirective
+    | Properties
+    | null
+    | undefined
+
+  /**
+   * Properties for the other
+   * {@link https://github.com/lin-stephanie/remark-directive-sugar/blob/main/src/directives/image.ts#L14 valid HTML element}.
+   *
+   * Note that `{}` in `:::image-*[]{}` will override these properties,
+   * except `className`, which is appended.
+   */
+  elementProps?:
+    | PropertiesFromContainerDirective
+    | Properties
     | null
     | undefined
 }
 
-export interface RemarkDirectiveSugarOptions {
+export interface Options {
   /**
-   * Configures the `image` directive.
-   *
-   * @see
+   * Configures the `:badge-[*]` directive.
    */
-  image?: ImageDirectiveOptions
-  /**
-   * Configures the `video` directive.
-   *
-   * @see
-   */
-  video?: VideoDirectiveOptions
-  /**
-   * Configures the `link` directive.
-   *
-   * @see
-   */
-  link?: LinkDirectiveOptions
-  /**
-   * Configures the `badge` directive.
-   *
-   * @see
-   */
-  badge?: BadgeDirectiveOptions
-}
+  badge?: BadgeDirectiveConfig
 
-export type ConfigOptions = Required<RemarkDirectiveSugarOptions>
+  /**
+   * Configures the `:link` directive.
+   */
+  link?: LinkDirectiveConfig
+
+  /**
+   * Configures the `::video[-*]` directive.
+   */
+  video?: VideoDirectiveConfig
+
+  /**
+   * Configures the `:::image-*` directive.
+   */
+  image?: ImageDirectiveConfig
+}

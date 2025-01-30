@@ -31,3 +31,5 @@ Thanks for making it this far! Writing is no easy task --- maybe you'd like to :
 Thanks for making it this far! Writing is no easy task --- maybe you'd like to :link{id=https://github.com/sponsors/lin-stephanie img=https://github.githubassets.com/assets/mona-e50f14d05e4b.png}.
 
 :link{id=https://github.com/}
+
+:link[Vite]{id=@vitejs url=https://vite.dev/}

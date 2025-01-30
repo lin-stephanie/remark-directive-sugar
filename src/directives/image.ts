@@ -9,7 +9,7 @@ import type {
   PhrasingContent,
 } from 'mdast'
 import type { Directives } from 'mdast-util-directive'
-import type { ImageDirectiveOptions } from '../types.js'
+import type { ImageDirectiveConfig } from '../types.js'
 
 const validTags = new Set<string>([
   'figure',
@@ -32,7 +32,7 @@ const validTags = new Set<string>([
  */
 export function handleImageDirective(
   node: Directives,
-  config: ImageDirectiveOptions,
+  config: ImageDirectiveConfig,
   regex: RegExp
 ) {
   if (node.type === 'textDirective')

@@ -1,7 +1,7 @@
 import { createIfNeeded, processUrl, mergeProps } from '../utils.js'
 
 import type { Directives } from 'mdast-util-directive'
-import type { LinkDirectiveOptions } from '../types.js'
+import type { LinkDirectiveConfig } from '../types.js'
 
 const customUrlRegex = /^(?:https?:\/\/)?(?:[\w-]+\.)+[a-z]{2,}(?:\/\S*)?$/
 const githubAcctRegex = /^@[a-zA-Z\d](?!.*--)[\w-]{0,37}[a-zA-Z\d]$/
@@ -37,7 +37,7 @@ const npmTab = new Set([
  */
 export function handleLinkDirective(
   node: Directives,
-  config: LinkDirectiveOptions
+  config: LinkDirectiveConfig
 ) {
   if (node.type === 'leafDirective')
     throw new Error(
@@ -107,11 +107,12 @@ export function handleLinkDirective(
   if (linkType === 'github-acct') {
     const acct = id.slice(1)
     resolvedUrl =
-      url || tab
+      url ??
+      (tab
         ? isGithubOrg
           ? `https://github.com/orgs/${acct}/${resolvedTab}`
           : `https://github.com/${acct}?tab=${resolvedTab}`
-        : `https://github.com/${acct}`
+        : `https://github.com/${acct}`)
 
     resolvedImg = img || `https://github.com/${acct}.png`
   }
