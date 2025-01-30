@@ -1,6 +1,6 @@
 {
   "name": "remark-directive-sugar",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "description": "Remark plugin built on remark-directive, providing predefined directives for image captions, video embedding, styled GitHub links, badges, and more.",
   "author": "Stephanie Lin <norwaywoods047@gmail.com>",
   "license": "MIT",
