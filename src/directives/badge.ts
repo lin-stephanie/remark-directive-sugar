@@ -34,8 +34,7 @@ export function handleBadgeDirective(
   if (match && !match[1]) {
     badgeType = undefined
   } else if (
-    match &&
-    match[1] &&
+    match?.[1] &&
     presets &&
     new Set(Object.keys(presets)).has(match[1])
   ) {

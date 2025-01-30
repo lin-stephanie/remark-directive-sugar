@@ -1,11 +1,10 @@
-import { unified } from 'unified'
-import { describe, test, expect } from 'vitest'
-
-import remarkParse from 'remark-parse'
-import remarkDirective from 'remark-directive'
-import remarkRehype from 'remark-rehype'
 import rehypeMinifyWhitespace from 'rehype-minify-whitespace'
 import rehypeStringify from 'rehype-stringify'
+import remarkDirective from 'remark-directive'
+import remarkParse from 'remark-parse'
+import remarkRehype from 'remark-rehype'
+import { unified } from 'unified'
+import { describe, test, expect } from 'vitest'
 
 import remarkDirectiveSugar from '../src/index.js'
 

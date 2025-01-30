@@ -1,4 +1,5 @@
 import { visit, EXIT } from 'unist-util-visit'
+
 import { createIfNeeded, mergeProps } from '../utils.js'
 
 import type {
@@ -64,7 +65,7 @@ export function handleImageDirective(
   const imgProperties = createIfNeeded(imgProps, node)
   visit(node, 'image', (imageNode) => {
     if (imgProperties) {
-      imageNode.data = imageNode.data || {}
+      imageNode.data ||= {}
       imageNode.data.hProperties = imgProperties
     }
 
@@ -75,20 +76,21 @@ export function handleImageDirective(
     throw new Error('Invalid `image` directive. The image is missing.')
 
   // remove unnecessary `paragraph` node that only contains an `image` node
-  node.children = node.children.reduce((acc: any[], child) => {
+  const newChildren: Array<DefinitionContent | BlockContent | PhrasingContent> =
+    []
+  for (const child of node.children) {
     if (child.type === 'paragraph' && child.children[0].type === 'image') {
-      acc.push(...child.children)
+      newChildren.push(...child.children)
     } else {
-      acc.push(child)
+      newChildren.push(child)
     }
-    return acc
-  }, [])
+  }
 
-  const children = node.children as (
-    | DefinitionContent
-    | BlockContent
-    | PhrasingContent
-  )[]
+  // @ts-expect-error (Type '(ContainerDirective | LeafDirective | TextDirective | Blockquote | Code | Heading | Html | ... 16 more ... | Strong)[]' is not assignable to type '(BlockContent | DefinitionContent)[]'.)
+  node.children = newChildren
+  const children = node.children as Array<
+    DefinitionContent | BlockContent | PhrasingContent
+  >
 
   if (matchTag === 'figure') {
     // get figcaption text (priority: `[]` of `:::image-figure[]{}`、`![]()`)
@@ -124,7 +126,7 @@ export function handleImageDirective(
 
     // update node
     data.hName = 'figure'
-    data.hProperties = figureProperties ? figureProperties : undefined
+    data.hProperties = figureProperties ?? undefined
     children.push(figcaptionNode)
   } else {
     // handle element props

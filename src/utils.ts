@@ -19,7 +19,7 @@ export const createDirectiveRegex = (
         : []),
   ])
 
-  const otherDirectives = Array.from(reservedDirectiveNames).filter(
+  const otherDirectives = [...reservedDirectiveNames].filter(
     (name) => name !== directiveName
   )
 
@@ -31,8 +31,8 @@ export const createDirectiveRegex = (
     }
   }
 
-  const aliasPattern = Array.from(aliases)
-    .map((alias) => alias.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&'))
+  const aliasPattern = [...aliases]
+    .map((alias) => alias.replaceAll(/[-/\\^$*+?.()|[\]{}]/g, '\\$&'))
     .join('|')
 
   return new RegExp(`^(?:${aliasPattern})(?:-(\\w+))?$`)
@@ -66,15 +66,19 @@ export function mergeProps(
   const classes = new Set<string>()
   const newProps: Properties = {}
 
-  const addClasses = (value: unknown) => {
+  const addClasses = (
+    value: string | number | boolean | Array<string | number>
+  ) => {
     if (typeof value === 'string') {
-      value.split(/\s+/).forEach((c) => c && classes.add(c))
+      for (const c of value.split(/\s+/)) {
+        if (c) classes.add(c)
+      }
     } else if (Array.isArray(value)) {
-      value.forEach((c) => {
+      for (const c of value) {
         if (typeof c === 'string' && c) {
           classes.add(c)
         }
-      })
+      }
     }
   }
 
@@ -82,15 +86,17 @@ export function mergeProps(
     if (!config) continue
     for (const key of Object.keys(config)) {
       const value = config[key]
-      if (key === 'class' || key === 'className') {
-        addClasses(value)
-      } else {
-        newProps[key] = value
+      if (value) {
+        if (key === 'class' || key === 'className') {
+          addClasses(value)
+        } else {
+          newProps[key] = value
+        }
       }
     }
   }
 
-  if (classes.size > 0) newProps.className = Array.from(classes)
+  if (classes.size > 0) newProps.className = [...classes]
 
   return newProps
 }
@@ -99,12 +105,14 @@ export function mergeProps(
  * Process a URL by removing the protocol and shortening the path
  * to a maximum length.
  */
-export function processUrl(url: string, maxPathLength: number = 14) {
+export function processUrl(url: string, maxPathLength = 14) {
   const urlWithoutProtocol = url.replace(/(^\w+:|^)\/\//, '')
   const [hostname, ...pathParts] = urlWithoutProtocol.split('/')
   const path = pathParts.join('/')
   const shortenedPath =
-    path.length > maxPathLength ? path.substring(0, maxPathLength) : path
+    path.length > maxPathLength
+      ? path.slice(0, Math.max(0, maxPathLength))
+      : path
 
   return hostname + (shortenedPath ? '/' + shortenedPath + '...' : '')
 }

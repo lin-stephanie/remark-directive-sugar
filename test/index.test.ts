@@ -98,7 +98,7 @@ run('badgeOptions', {
   badge: {
     spanProps(node) {
       let noPreset = false
-      const match = node.name.match(new RegExp(`^(?:b|badge)(?:-(\\w+))?$`))
+      const match = /^(?:b|badge)(?:-(\w+))?$/.exec(node.name)
       if (match && !match[1]) noPreset = true
 
       return noPreset

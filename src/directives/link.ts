@@ -3,14 +3,14 @@ import { createIfNeeded, processUrl, mergeProps } from '../utils.js'
 import type { Directives } from 'mdast-util-directive'
 import type { LinkDirectiveOptions } from '../types.js'
 
-const customUrlRegex = /^(?:https?:\/\/)?(?:[\w-]+\.)+[a-z]{2,}(?:\/[^\s]*)?$/
+const customUrlRegex = /^(?:https?:\/\/)?(?:[\w-]+\.)+[a-z]{2,}(?:\/\S*)?$/
 const githubAcctRegex = /^@[a-zA-Z\d](?!.*--)[\w-]{0,37}[a-zA-Z\d]$/
 const githubRepoRegex = /^([a-zA-Z\d](?!.*--)[\w-]{0,37}[a-zA-Z\d])\/.*$/
 const npmPkgRegex =
-  /^(?=.{1,214}$)(?:@[a-z0-9][a-z0-9._-]*\/)?[a-z0-9][a-z0-9._-]*$/
+  /^(?=.{1,214}$)(?:@[a-z\d][a-z\d._-]*\/)?[a-z\d][a-z\d._-]*$/
 
 const tabOrgRegex = /^org-(\w+)$/
-const githubTab = [
+const githubTab = new Set([
   'repositories',
   'projects',
   'packages',
@@ -22,8 +22,14 @@ const githubTab = [
   'org-packages',
   'org-sponsoring',
   'org-people',
-]
-const npmTab = ['readme', 'code', 'dependencies', 'dependents', 'versions']
+])
+const npmTab = new Set([
+  'readme',
+  'code',
+  'dependencies',
+  'dependents',
+  'versions',
+])
 
 /**
  * Handles the `link` directive.
@@ -43,11 +49,9 @@ export function handleLinkDirective(
       'Unexpected container directive. Use single colon (`:`) for a `link` text directive.'
     )
 
-  const defaultAProps = { className: ['rds-link'] }
+  const defaultLinkProps = { className: ['rds-link'] }
   const { aProps, imgProps, faviconSourceUrl } = config
-  const faviconUrl = faviconSourceUrl
-    ? faviconSourceUrl
-    : 'https://api.faviconkit.com/{domain}'
+  const faviconUrl = faviconSourceUrl ?? 'https://api.faviconkit.com/{domain}'
 
   const data = (node.data ||= {})
   const attributes = node.attributes || {}
@@ -75,11 +79,11 @@ export function handleLinkDirective(
   let isGithubOrg = false
   let resolvedTab = ''
   if (tab) {
-    if (!githubTab.includes(tab) && !npmTab.includes(tab)) {
+    if (!githubTab.has(tab) && !npmTab.has(tab)) {
       throw new Error('Invalid `link` directive. The `tab` is invalid.')
     } else {
-      const match = tab.match(tabOrgRegex)
-      isGithubOrg = match ? true : false
+      const match = tabOrgRegex.exec(tab)
+      isGithubOrg = Boolean(match)
       resolvedTab = match ? match[1] : tab
     }
   }
@@ -113,7 +117,7 @@ export function handleLinkDirective(
   }
 
   if (linkType === 'github-repo') {
-    const match = id.match(githubRepoRegex)
+    const match = githubRepoRegex.exec(id)
     resolvedUrl = url || `https://github.com/${id}`
     resolvedImg = img || `https://github.com/${match?.[1]}.png`
   }
@@ -137,7 +141,7 @@ export function handleLinkDirective(
   // handle props
   const aProperties = createIfNeeded(aProps, node)
   const aNewProperties = mergeProps(
-    { ...defaultAProps, ...aProperties },
+    { ...defaultLinkProps, ...aProperties },
     { 'data-link': linkType },
     attrs
   )

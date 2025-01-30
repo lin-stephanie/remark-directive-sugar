@@ -3,7 +3,7 @@ import { createIfNeeded, mergeProps } from '../utils.js'
 import type { Directives } from 'mdast-util-directive'
 import type { VideoDirectiveOptions } from '../types.js'
 
-const customUrlRegex = /^(?:https?:\/\/)?(?:[\w-]+\.)+[a-z]{2,}(?:\/[^\s]*)?$/
+const customUrlRegex = /^(?:https?:\/\/)?(?:[\w-]+\.)+[a-z]{2,}(?:\/\S*)?$/
 
 const defaultPlatforms = {
   youtube: 'https://www.youtube-nocookie.com/embed/{id}',
@@ -55,7 +55,7 @@ export function handleVideoDirective(
   // check if it matches the platform & get type
   let videoType: string | undefined
   const match = node.name.match(regex)
-  if (match && match[1]) {
+  if (match?.[1]) {
     if (match[1] in expandedPlatforms) {
       videoType = match[1]
     } else {
@@ -72,20 +72,14 @@ export function handleVideoDirective(
   }
 
   // get src
-  let src: string
-  if (videoType === 'url') {
-    src = id
-  } else {
-    src = expandedPlatforms[videoType].replace('{id}', id)
-  }
+  const src =
+    videoType === 'url' ? id : expandedPlatforms[videoType].replace('{id}', id)
 
   // get title
-  let title: string
-  if (children.length > 0 && children[0].type === 'text') {
-    title = children[0].value
-  } else {
-    title = 'Video Player'
-  }
+  const title =
+    children.length > 0 && children[0].type === 'text'
+      ? children[0].value
+      : 'Video Player'
 
   // handle props
 
