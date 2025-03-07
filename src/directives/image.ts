@@ -56,7 +56,7 @@ export function handleImageDirective(
     matchTag = match[1]
   } else {
     throw new Error(
-      'Invalid `image` directive. The directive failed to match a valid HTML tag. See https://github.com/lin-stephanie/remark-directive-sugar/blob/main/src/directives/image.ts#L22 for details.'
+      'Invalid `image` directive. The directive failed to match a valid HTML tag. See https://github.com/lin-stephanie/remark-directive-sugar/blob/main/src/directives/image.ts#L14 for details.'
     )
   }
 
