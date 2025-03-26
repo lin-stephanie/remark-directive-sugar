@@ -1,6 +1,7 @@
 
 # remark-directive-sugar
 
+[![version][version-badge]][version-link]
 [![codecov][coverage-badge]][coverage]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
 [![jsDocs.io][jsdocs-src]][jsdocs-href]
@@ -151,7 +152,7 @@ Run `node example.js` (`pnpm dev`) to get:
 Use `:link` directive to create links with avatars or favicons for GitHub, npm, or custom URLs. Say `example.md` contains: 
 
 ```md
-<!-- Link to a GitHub user or organization (prepend `id` with `@`) -->
+<!-- Link to a GitHub user or organization (prepend `id` or `#` with `@`) -->
 <!-- Use `tab` to navigate sections: -->
 <!-- for users: 'repositories', 'projects', 'packages', 'stars', 'sponsoring', 'sponsors' -->
 <!-- for orgs: 'org-repositories', 'org-projects', 'org-packages', 'org-sponsoring', 'org-people' -->
@@ -276,7 +277,7 @@ Use `::video[-*]` for consistent video embedding across different platforms. Say
 
 ::video-bilibili{id=BV1MC4y1c7Kv}
 
-<!-- Embed a Vimeo video with a custom title -->
+<!-- Embed a Vimeo video with a custom `title` attr -->
 
 ::video-vimeo[custom title]{id=912831806}
 
@@ -336,13 +337,23 @@ Use `:::image-*` to wrap images in a container for captions, clickable links, an
 <!-- `:::image-a{<a> attrs}` -->
 
 :::image-a{href="https://github.com/lin-stephanie/remark-directive-sugar"}
-![](https://images.pexels.com/photos/237272/pexels-photo-237273.jpeg)
+![](https://images.pexels.com/photos/237273/pexels-photo-237273.jpeg)
 :::
 
 <!-- `:::image-*{<*> attrs}` -->
 
 :::image-div
-![](https://images.pexels.com/photos/237272/pexels-photo-237273.jpeg)
+![](https://images.pexels.com/photos/237273/pexels-photo-237273.jpeg)
+:::
+
+<!-- Setting `stripParagraph: false` keeps `<p>` to prevent parsing issues with other remark plugins like `remark-imgattr` -->
+
+:::image-figure[Figcaption text]
+![Alt text](https://images.pexels.com/photos/237273/pexels-photo-237273.jpeg)
+:::
+
+:::image-a{href="https://github.com/lin-stephanie/remark-directive-sugar"}
+![](https://images.pexels.com/photos/237273/pexels-photo-237273.jpeg)
 :::
 ```
 
@@ -366,6 +377,19 @@ Run `node example.js` (`pnpm dev`) to get:
 <div>
   <img src="https://images.pexels.com/photos/237272/pexels-photo-237273.jpeg" alt="">
 </div>
+
+<figure>
+  <p>
+    <img src="https://images.pexels.com/photos/237273/pexels-photo-237273.jpeg" alt="Alt text">
+  </p>
+  <figcaption>Figcaption text</figcaption>
+</figure>
+
+<a href="https://github.com/lin-stephanie/remark-directive-sugar">
+  <p>
+    <img src="https://images.pexels.com/photos/237273/pexels-photo-237273.jpeg" alt="">
+  </p>
+</a>
 ```
 
 ## API
@@ -409,6 +433,8 @@ If you see any errors or room for improvement on this plugin, feel free to open 
 
 <!-- Badges -->
 
+[version-badge]: https://img.shields.io/github/v/release/lin-stephanie/remark-directive-sugar?label=release&style=flat&colorA=080f12&colorB=f87171
+[version-link]: https://github.com/lin-stephanie/remark-directive-sugar/releases
 [coverage-badge]: https://img.shields.io/codecov/c/github/lin-stephanie/remark-directive-sugar?style=flat&colorA=080f12&colorB=ef7575
 [coverage]: https://codecov.io/github/lin-stephanie/remark-directive-sugar
 [npm-downloads-src]: https://img.shields.io/npm/dm/remark-directive-sugar?style=flat&colorA=080f12&colorB=ef7575

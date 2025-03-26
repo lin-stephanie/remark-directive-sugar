@@ -191,6 +191,13 @@ export interface ImageDirectiveConfig {
     | Properties
     | null
     | undefined
+
+  /**
+   * Whether to remove `<p>` that directly wrap `<img>`.
+   *
+   * @default true
+   */
+  stripParagraph?: boolean
 }
 
 export interface Options {

@@ -114,6 +114,7 @@ run('imageOptions', {
       if (node.name === 'image-a') isA = true
       return isA ? { class: 'a-class' } : { class: 'element-class' }
     },
+    stripParagraph: false,
   },
 })
 

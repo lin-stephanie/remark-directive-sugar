@@ -44,7 +44,13 @@ export function handleImageDirective(
       'Unexpected leaf directive. Use three colons (`:::`) for an `image` container directive.'
     )
 
-  const { imgProps, figureProps, figcaptionProps, elementProps } = config
+  const {
+    imgProps,
+    figureProps,
+    figcaptionProps,
+    elementProps,
+    stripParagraph = true,
+  } = config
 
   const data = (node.data ||= {})
   const attributes = node.attributes || {}
@@ -79,7 +85,11 @@ export function handleImageDirective(
   const newChildren: Array<DefinitionContent | BlockContent | PhrasingContent> =
     []
   for (const child of node.children) {
-    if (child.type === 'paragraph' && child.children[0].type === 'image') {
+    if (
+      stripParagraph &&
+      child.type === 'paragraph' &&
+      child.children[0].type === 'image'
+    ) {
       newChildren.push(...child.children)
     } else {
       newChildren.push(child)
