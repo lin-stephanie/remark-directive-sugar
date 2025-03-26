@@ -103,11 +103,11 @@ export interface LinkDirectiveConfig {
    * Must include the `{domain}` placeholder, replaced by the actual domain name.
    *
    * @default
-   * 'https://api.faviconkit.com/{domain}'
+   * 'https://icons.duckduckgo.com/ip3/{domain}.ico'
    *
    * @example
    * 'https://favicon.yandex.net/favicon/{domain}'
-   * 'https://www.google.com/s2/favicons?domain={domain}&sz=128'
+   * 'https://www.google.com/s2/favicons?domain={domain}'
    */
   faviconSourceUrl?:
     | `http://${string}{domain}${string}`

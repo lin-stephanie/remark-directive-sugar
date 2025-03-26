@@ -47,10 +47,10 @@ const remarkDirectiveSugar: Plugin<[Options?], Root> = (options) => {
         node.type === 'leafDirective' ||
         node.type === 'textDirective'
       ) {
-        const imageDirectiveRegex = createDirectiveRegex('image', image.alias)
-        const videoDirectiveRegex = createDirectiveRegex('video', video.alias)
-        const linkDirectiveRegex = createDirectiveRegex('link', link.alias)
         const badgeDirectiveRegex = createDirectiveRegex('badge', badge.alias)
+        const linkDirectiveRegex = createDirectiveRegex('link', link.alias)
+        const videoDirectiveRegex = createDirectiveRegex('video', video.alias)
+        const imageDirectiveRegex = createDirectiveRegex('image', image.alias)
 
         if (badgeDirectiveRegex.test(node.name)) {
           handleBadgeDirective(node, badge, badgeDirectiveRegex)

@@ -51,7 +51,8 @@ export function handleLinkDirective(
 
   const defaultLinkProps = { className: ['rds-link'] }
   const { aProps, imgProps, faviconSourceUrl } = config
-  const faviconUrl = faviconSourceUrl ?? 'https://api.faviconkit.com/{domain}'
+  const faviconUrl =
+    faviconSourceUrl ?? 'https://icons.duckduckgo.com/ip3/{domain}.ico'
 
   const data = (node.data ||= {})
   const attributes = node.attributes || {}
