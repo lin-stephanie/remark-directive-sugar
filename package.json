@@ -57,6 +57,7 @@
     "rehype-parse": "^9.0.1",
     "rehype-stringify": "^10.0.0",
     "remark-directive": "^4.0.0",
+    "remark-imgattr": "^1.0.5",
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.0",
     "rimraf": "^6.0.1",

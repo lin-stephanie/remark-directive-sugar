@@ -2,6 +2,7 @@ import rehypeMinifyWhitespace from 'rehype-minify-whitespace'
 import rehypeParse from 'rehype-parse'
 import rehypeStringify from 'rehype-stringify'
 import remarkDirective from 'remark-directive'
+import remarkImgattr from 'remark-imgattr'
 import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
 import { readSync } from 'to-vfile'
@@ -19,6 +20,7 @@ function run(name: string, options?: Options) {
     .use(remarkParse)
     .use(remarkDirective)
     .use(remarkDirectiveSugar, options)
+    .use(remarkImgattr)
     .use(remarkRehype)
     .use(rehypeMinifyWhitespace)
     .use(rehypeStringify)
@@ -114,6 +116,11 @@ run('imageOptions', {
       if (node.name === 'image-a') isA = true
       return isA ? { class: 'a-class' } : { class: 'element-class' }
     },
+    stripParagraph: false,
+  },
+})
+run('imageWithAttr', {
+  image: {
     stripParagraph: false,
   },
 })
