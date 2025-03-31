@@ -107,7 +107,7 @@ export interface LinkDirectiveConfig {
    *
    * @example
    * 'https://favicon.yandex.net/favicon/{domain}'
-   * 'https://www.google.com/s2/favicons?domain={domain}'
+   * 'https://www.google.com/s2/favicons?domain={domain}&sz=128'
    */
   faviconSourceUrl?:
     | `http://${string}{domain}${string}`

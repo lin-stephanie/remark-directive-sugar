@@ -39,7 +39,7 @@
     "release": "npx bumpp --tag %s --commit 'chore: release %s' --all"
   },
   "peerDependencies": {
-    "remark-directive": "^3.0.1"
+    "remark-directive": "^4.0.0"
   },
   "dependencies": {
     "@types/hast": "^3.0.4",

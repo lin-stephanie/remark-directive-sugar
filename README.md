@@ -173,7 +173,7 @@ Example 6: :link[Astro]{id=withastro/astro}
 Example 7: :link{#remark-directive-sugar}
 Example 8: :link{id=remark-directive-sugar tab=dependencies}
 
-<!-- Link to an custom URL (must use `id`, not `#`) -->
+<!-- Link to a custom URL (must use `id`, not `#`) -->
 
 Example 9: :link{id=https://developer.mozilla.org/en-US/docs/Web/JavaScript}
 Example 10: :link[Google]{id=https://www.google.com/}
