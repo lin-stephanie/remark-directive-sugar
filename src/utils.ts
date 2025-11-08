@@ -32,7 +32,7 @@ export const createDirectiveRegex = (
   }
 
   const aliasPattern = [...aliases]
-    .map((alias) => alias.replaceAll(/[-/\\^$*+?.()|[\]{}]/g, '\\$&'))
+    .map((alias) => alias.replaceAll(/[-/\\^$*+?.()|[\]{}]/g, String.raw`\$&`))
     .join('|')
 
   return new RegExp(`^(?:${aliasPattern})(?:-(\\w+))?$`)

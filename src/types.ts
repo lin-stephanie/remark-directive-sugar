@@ -106,8 +106,9 @@ export interface LinkDirectiveConfig {
    * 'https://icons.duckduckgo.com/ip3/{domain}.ico'
    *
    * @example
-   * 'https://favicon.yandex.net/favicon/{domain}'
    * 'https://www.google.com/s2/favicons?domain={domain}&sz=128'
+   * 'https://favicon.yandex.net/favicon/{domain}'
+   * 'https://favicon.im/{domain}'
    */
   faviconSourceUrl?:
     | `http://${string}{domain}${string}`
