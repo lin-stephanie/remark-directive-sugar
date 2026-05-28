@@ -227,12 +227,12 @@ Run `node example.js` (`pnpm dev`) to get:
 <p>
   Example 7:
   <a href="https://www.npmjs.com/package/remark-directive-sugar" data-link="npm-pkg" class="rds-link">
-    <img src="https://api.faviconkit.com/www.npmjs.com" alt="">
+    <img src="https://raw.githubusercontent.com/npm/logos/refs/heads/master/npm%20square/n.svg" alt="">
     remark-directive-sugar
   </a>
   Example 8:
   <a href="https://www.npmjs.com/package/remark-directive-sugar?activeTab=dependencies" data-link="npm-pkg" class="rds-link">
-    <img src="https://api.faviconkit.com/www.npmjs.com" alt="">
+    <img src="https://raw.githubusercontent.com/npm/logos/refs/heads/master/npm%20square/n.svg" alt="">
     remark-directive-sugar
   </a>
 </p>
@@ -240,12 +240,12 @@ Run `node example.js` (`pnpm dev`) to get:
 <p>
   Example 9:
   <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" data-link="custom-url" class="rds-link">
-    <img src="https://api.faviconkit.com/developer.mozilla.org" alt="">
+    <img src="https://icons.duckduckgo.com/ip3/developer.mozilla.org.ico" alt="">
     developer.mozilla.org/en-US/docs/Web...
   </a>
   Example 10:
   <a href="https://www.google.com/" data-link="custom-url" class="rds-link">
-    <img src="https://api.faviconkit.com/www.google.com" alt="">
+    <img src="https://icons.duckduckgo.com/ip3/www.google.com.ico" alt="">
     Google
   </a>
 </p>

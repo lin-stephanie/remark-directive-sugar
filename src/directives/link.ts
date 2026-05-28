@@ -131,7 +131,7 @@ export function handleLinkDirective(
         : `https://www.npmjs.com/package/${id}`
     resolvedImg =
       img ||
-      faviconUrl.replace('{domain}', new URL('https://www.npmjs.com').hostname)
+      'https://raw.githubusercontent.com/npm/logos/refs/heads/master/npm%20square/n.svg'
   }
 
   if (linkType === 'custom-url') {
