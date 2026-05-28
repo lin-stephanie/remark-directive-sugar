@@ -60,7 +60,7 @@ export function createIfNeeded<T extends Directives>(
 export function mergeProps(
   globalProps: Properties | null | undefined,
   presetProps: Properties | null | undefined,
-  localProps: Record<string, string | null | undefined> | null | undefined
+  localProps: Properties | null | undefined
 ) {
   const configs = [globalProps, presetProps, localProps]
   const classes = new Set<string>()

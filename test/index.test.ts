@@ -19,8 +19,8 @@ function run(name: string, options?: Options) {
   const markdownProcessor = unified()
     .use(remarkParse)
     .use(remarkDirective)
-    .use(remarkDirectiveSugar, options)
     .use(remarkImgattr)
+    .use(remarkDirectiveSugar, options)
     .use(remarkRehype)
     .use(rehypeMinifyWhitespace)
     .use(rehypeStringify)
@@ -122,6 +122,17 @@ run('imageOptions', {
 run('imageWithAttr', {
   image: {
     stripParagraph: false,
+  },
+})
+run('hProperties', {
+  image: {
+    imgProps: { className: ['from-config'], loading: 'lazy' },
+  },
+})
+run('hPropertiesPriority', {
+  image: {
+    imgProps: { className: ['from-config'], loading: 'lazy' },
+    imgPropsPriority: 'hProperties',
   },
 })
 

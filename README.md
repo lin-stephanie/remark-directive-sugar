@@ -416,8 +416,8 @@ Configuration (TypeScript type). All options are optional.
 
 - `badge` ([`BadgeDirectiveConfig`](https://github.com/lin-stephanie/remark-directive-sugar/blob/main/src/types.ts#L29)) — `:badge[-*]` configuration options.
 - `link` ([`LinkDirectiveConfig`](https://github.com/lin-stephanie/remark-directive-sugar/blob/main/src/types.ts#L78)) — `:link` configuration options.
-- `video` ([`VideoDirectiveConfig`](https://github.com/lin-stephanie/remark-directive-sugar/blob/main/src/types.ts#L117)) — `::video[-*]` configuration options.
-- `image` ([`ImageDirectiveConfig`](https://github.com/lin-stephanie/remark-directive-sugar/blob/main/src/types.ts#L152)) — `:::image-*` configuration options.
+- `video` ([`VideoDirectiveConfig`](https://github.com/lin-stephanie/remark-directive-sugar/blob/main/src/types.ts#L118)) — `::video[-*]` configuration options.
+- `image` ([`ImageDirectiveConfig`](https://github.com/lin-stephanie/remark-directive-sugar/blob/main/src/types.ts#L153)) — `:::image-*` configuration options.
 
 ## Types
 

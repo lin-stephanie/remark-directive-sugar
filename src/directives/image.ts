@@ -46,6 +46,7 @@ export function handleImageDirective(
 
   const {
     imgProps,
+    imgPropsPriority = 'imgProps',
     figureProps,
     figcaptionProps,
     elementProps,
@@ -72,7 +73,10 @@ export function handleImageDirective(
   visit(node, 'image', (imageNode) => {
     if (imgProperties) {
       imageNode.data ||= {}
-      imageNode.data.hProperties = imgProperties
+      imageNode.data.hProperties =
+        imgPropsPriority === 'hProperties'
+          ? mergeProps(imgProperties, null, imageNode.data.hProperties)
+          : mergeProps(imageNode.data.hProperties, null, imgProperties)
     }
 
     hasImage = true

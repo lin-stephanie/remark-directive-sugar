@@ -164,6 +164,17 @@ export interface ImageDirectiveConfig {
   imgProps?: PropertiesFromContainerDirective | Properties | null | undefined
 
   /**
+   * Controls which image attributes win when both `imgProps` and a per-image
+   * attribute plugin set the same property.
+   *
+   * Use `'imgProps'` to let the config win, or `'hProperties'` to let
+   * per-image attributes win. Classes are always combined.
+   *
+   * @default 'imgProps'
+   */
+  imgPropsPriority?: 'imgProps' | 'hProperties' | undefined
+
+  /**
    * Properties for the generated `figure` element.
    */
   figureProps?: PropertiesFromContainerDirective | Properties | null | undefined

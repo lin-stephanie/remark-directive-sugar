@@ -33,7 +33,7 @@
 :::
 
 :::img-figure[This example shows different images for light (add `class:img-light`) and dark (add `class:img-dark`) modes.]
-![](https://images.pexels.com/photos/237272/pexels-photo-237272.jpeg)
+![](https://images.pexels.com/photos/237272/pexels-photo-237272.jpeg)(class:img-light)
 
-![](https://images.pexels.com/photos/237272/pexels-photo-237272.jpeg)
+![](https://images.pexels.com/photos/237272/pexels-photo-237272.jpeg)(class:img-dark)
 :::
