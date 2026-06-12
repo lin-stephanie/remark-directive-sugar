@@ -35,7 +35,7 @@ export const createDirectiveRegex = (
     .map((alias) => alias.replaceAll(/[-/\\^$*+?.()|[\]{}]/g, String.raw`\$&`))
     .join('|')
 
-  return new RegExp(`^(?:${aliasPattern})(?:-(\\w+))?$`)
+  return new RegExp(String.raw`^(?:${aliasPattern})(?:-(\w+))?$`)
 }
 
 /**

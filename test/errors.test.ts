@@ -21,9 +21,7 @@ function createProcessor(options?: Options) {
 }
 
 function expectToThrow(md: string, errorMessage: string, options?: Options) {
-  expect(() => createProcessor(options).processSync(md)).toThrowError(
-    errorMessage
-  )
+  expect(() => createProcessor(options).processSync(md)).toThrow(errorMessage)
 }
 
 describe('Error Cases', () => {
