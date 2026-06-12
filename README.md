@@ -26,7 +26,7 @@ If you're using `remark-directive`, this plugin provides ready-to-use directives
 
 ## Installation
 
-This package is [ESM only](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c). In Node.js (version 16+), install with your package manager:
+This package is [ESM only](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c). In Node.js (version 18+), install with your package manager:
 
 ```sh
 npm install remark-directive-sugar
