@@ -5,7 +5,7 @@ title: 'Feature: '
 body:
   - type: markdown
     attributes:
-      value: Before getting started, please checked the [GitHub Issues](https://github.com/lin-stephanie/obsidian-url-display/issues) (open or closed) and there are no similar issues.
+      value: Before getting started, please checked the [GitHub Issues](https://github.com/lin-stephanie/remark-directive-sugar/issues) (open or closed) and there are no similar issues.
   - type: textarea
     id: reason
     attributes:
