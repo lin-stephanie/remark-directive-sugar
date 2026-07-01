@@ -51,7 +51,7 @@
     "unist-util-visit": "^5.1.0"
   },
   "devDependencies": {
-    "@types/node": "^25.9.3",
+    "@types/node": "^26.0.1",
     "@vitest/coverage-v8": "^4.1.8",
     "lint-staged": "^17.0.7",
     "prettier": "^3.8.4",
@@ -66,10 +66,10 @@
     "simple-git-hooks": "^2.13.1",
     "to-vfile": "^8.0.0",
     "type-coverage": "^2.29.7",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.3",
     "unified": "^11.0.5",
     "vitest": "^4.1.8",
-    "xo": "^1.2.3"
+    "xo": "^3.0.2"
   },
   "xo": [
     {
